@@ -54,7 +54,7 @@ class Ajax_Filter_Posts {
 	public function __construct() {
 
 		$this->plugin_name = 'ajax-filter-posts';
-		$this->version = '1.0.0';
+		$this->version = '0.1';
 
 		add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
 		add_action('wp_ajax_process_filter_change', [$this, 'process_filter_change']);
