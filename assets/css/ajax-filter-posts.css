@@ -38,6 +38,7 @@
   width: 50%;
   float: left;
   overflow: hidden;
+  min-height: 1px; /* Show empty filterlist when there is only one post to keep the view intact. */
 }
 
 .ajax-posts__posts {
