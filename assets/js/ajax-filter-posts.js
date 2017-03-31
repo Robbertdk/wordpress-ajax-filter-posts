@@ -1,7 +1,7 @@
 (function (){
 
   var queryParams = null;
-	var container = document.querySelector('.js-container-async');
+  var container = document.querySelector('.js-container-async');
   if (container) {
     var filterTogglers = container.getElementsByClassName('js-toggle-filters');
     var content = container.querySelector('.ajax-posts__posts');
@@ -62,21 +62,21 @@
    * 
    * @param  NodeElement  filter  Clicked filter
    */
-	function handleFilterEvent(filter) {
+  function handleFilterEvent(filter) {
 
-		if (!filter.classList.contains('is-active')) {
-			filter.classList.add('is-active');
-			updateQueryParams({
-				page: 1,
-				filter: filter.dataset.filter,
-				term: filter.dataset.term,
-			});
-		} else {
-			filter.classList.remove('is-active');
-			removeQueryParam(filter.dataset.filter, filter.dataset.term);
-		}
-		getAJAXPosts({reset: true});
-	}
+    if (!filter.classList.contains('is-active')) {
+      filter.classList.add('is-active');
+      updateQueryParams({
+        page: 1,
+        filter: filter.dataset.filter,
+        term: filter.dataset.term,
+      });
+    } else {
+      filter.classList.remove('is-active');
+      removeQueryParam(filter.dataset.filter, filter.dataset.term);
+    }
+    getAJAXPosts({reset: true});
+  }
 
   /**
    * Get next page of posts
@@ -119,32 +119,32 @@
    * 
    * @param  Array      params    params that will be changed
    */
-	function updateQueryParams(params) {
-		queryParams.page = params.page;
+  function updateQueryParams(params) {
+    queryParams.page = params.page;
 
-		// If we're also updating the taxonomy
-		if (params.filter) {
-			if (queryParams.tax.hasOwnProperty(params.filter)) {
-				queryParams.tax[params.filter].push(params.term);
-			} else {
-				queryParams.tax[params.filter] = [params.term];
-			}
-		}
-	}
+    // If we're also updating the taxonomy
+    if (params.filter) {
+      if (queryParams.tax.hasOwnProperty(params.filter)) {
+        queryParams.tax[params.filter].push(params.term);
+      } else {
+        queryParams.tax[params.filter] = [params.term];
+      }
+    }
+  }
 
-	/**
-	 * Remove a term from the set of query params
-	 * 
-	 * @param  string 	tax 	taxonomy of the term to remove
-	 * @param  {tring 	term 	term to remove
-	 */
-	function removeQueryParam(tax, term) {
-		if (queryParams.tax.hasOwnProperty(tax)) {
-			if (queryParams.tax[tax].indexOf(term) > -1) {
-				queryParams.tax[tax].splice( queryParams.tax[tax].indexOf(term) , 1 );
-			}
-		}
-	}
+  /**
+   * Remove a term from the set of query params
+   * 
+   * @param  string   tax   taxonomy of the term to remove
+   * @param  {tring   term  term to remove
+   */
+  function removeQueryParam(tax, term) {
+    if (queryParams.tax.hasOwnProperty(tax)) {
+      if (queryParams.tax[tax].indexOf(term) > -1) {
+        queryParams.tax[tax].splice( queryParams.tax[tax].indexOf(term) , 1 );
+      }
+    }
+  }
 
   /**
    * Show the Error Reponse div
@@ -161,24 +161,24 @@
     status.style.display = 'none';
   }
 
-	/**
-	 * Get new posts via Ajax
-	 *
-	 * Retrieve a new set of posts based on the created query
-	 * 
-	 * @return string server side generated HTML
-	 */
-	function getAJAXPosts(args) {
+  /**
+   * Get new posts via Ajax
+   *
+   * Retrieve a new set of posts based on the created query
+   * 
+   * @return string server side generated HTML
+   */
+  function getAJAXPosts(args) {
 
     // Set status to querying
     container.classList.add('is-waiting');
 
-		var request = new XMLHttpRequest();
-		request.open('POST', filterPosts.ajaxUrl, true);
-		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		request.timeout = 4000; // time in milliseconds
-		
-		request.onload = function() {
+    var request = new XMLHttpRequest();
+    request.open('POST', filterPosts.ajaxUrl, true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.timeout = 4000; // time in milliseconds
+    
+    request.onload = function() {
 
       console.log(this.response);
 
@@ -188,14 +188,14 @@
         content.removeChild(loadMoreButton.parentNode);
       }
       var response = JSON.parse(this.response);
-    	if (this.status === 200) {
+      if (this.status === 200) {
         // If we have a succesfull query
         if (response.success) {
           // Hide error status button
           hideResponseMessage();
           // If we have to remove the show more button
           if (args.reset) {
-        		content.innerHTML = response.data.content;        
+            content.innerHTML = response.data.content;        
           } else {
             content.innerHTML += response.data.content;
           }          
@@ -203,41 +203,41 @@
           status.innerHTML = response.data;
           showResponseMessage();
         }
-	    } else {
-				status.innerHTML = filterPosts.serverErrorMessage;
+      } else {
+        status.innerHTML = filterPosts.serverErrorMessage;
         showResponseMessage();
-			}
+      }
       // Resolve status
       container.classList.remove('is-waiting');
-		};
+    };
 
-		request.ontimeout = function() {
-			status.innerHTML = filterPosts.timeoutMessage;
+    request.ontimeout = function() {
+      status.innerHTML = filterPosts.timeoutMessage;
       showResponseMessage();
       container.classList.remove('is-waiting');
-		}
+    }
 
-		request.send(objectToQueryString({
-			action: 'process_filter_change',
-			nonce: filterPosts.nonce,
-			params: queryParams,		
-		}));
-	}
+    request.send(objectToQueryString({
+      action: 'process_filter_change',
+      nonce: filterPosts.nonce,
+      params: queryParams,    
+    }));
+  }
 
-	/**
-	 * Helper function for event delegation
-	 *
-	 * To add event listeners on dynamic content, you can add a listener 
-	 * on thewrapping container, find the dom-node that triggered 
-	 * the event and check if that node mach our 
-	 * 
-	 * @param  NodeElement  el 					wrapping element for the dynamic content
-	 * @param  string 		  eventName  	type of event, e.g. click, mouseenter, etc
-	 * @param  string 		 	selector   	selector criteria of the element where the action should be on
-	 * @param  Function 		fn        	callback funciton
-	 * @return Function 		The callback
-	 */
-	function on(el, eventName, selector, fn) {
+  /**
+   * Helper function for event delegation
+   *
+   * To add event listeners on dynamic content, you can add a listener 
+   * on thewrapping container, find the dom-node that triggered 
+   * the event and check if that node mach our 
+   * 
+   * @param  NodeElement  el          wrapping element for the dynamic content
+   * @param  string       eventName   type of event, e.g. click, mouseenter, etc
+   * @param  string       selector    selector criteria of the element where the action should be on
+   * @param  Function     fn          callback funciton
+   * @return Function     The callback
+   */
+  function on(el, eventName, selector, fn) {
     var element = el;
 
     element.addEventListener(eventName, function(event) {
@@ -258,23 +258,23 @@
             }
         }
     });
-	}
+  }
 
-	/**
-	 * Convert an deep object to a url parameter list
-	 *
-	 * Boiled down from jQuery
-	 *
-	 * WordPress Ajax post request doesn't accept JSON, only form-urlencoded!
-	 * Took me a while to get...
+  /**
+   * Convert an deep object to a url parameter list
+   *
+   * Boiled down from jQuery
+   *
+   * WordPress Ajax post request doesn't accept JSON, only form-urlencoded!
+   * Took me a while to get...
    * 
-	 * Although seems not to be totally true: 
-	 * http://wordpress.stackexchange.com/questions/177554/allowing-admin-ajax-php-to-receive-application-json-instead-of-x-www-form-url
+   * Although seems not to be totally true: 
+   * http://wordpress.stackexchange.com/questions/177554/allowing-admin-ajax-php-to-receive-application-json-instead-of-x-www-form-url
    *
    * But in this case we just convert the params object to a url encoded string, like our friend and foe jQuery does. 
-	 *
-	 */
-	function objectToQueryString(a) {
+   *
+   */
+  function objectToQueryString(a) {
         var prefix, s, add, name, r20, output;
         s = [];
         r20 = /%20/g;
@@ -323,6 +323,6 @@
         }
     }
 
-	init();
+  init();
 
 }());
