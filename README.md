@@ -32,7 +32,7 @@ I build a lot of sites that needed a functionality like this and decided to crea
 
 ## Installation
 
-Clone this repo to your plugins or mu-plugins folder.
+Clone this repo to your plugins or mu-plugins folder. When you load it in your mu-plugins folder, you have to call the plugin via a file that is directly in the `mu-plugins` folder. See (this article](https://www.sitepoint.com/wordpress-mu-plugins/) for more information.
 
 ## License
 
