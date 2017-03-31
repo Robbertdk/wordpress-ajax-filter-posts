@@ -1,37 +1,36 @@
 (function (){
 
+  var queryParams = null;
 	var container = document.querySelector('.js-container-async');
-  var filterTogglers = container.getElementsByClassName('js-toggle-filters');
-  var content = container.querySelector('.ajax-posts__posts');
-  var status = container.querySelector('.ajax-posts__status');
-	var queryParams = {
-		'page' : null,
-    'tax'  : {},
-    'quantity'  : 0,
-    'postType': 'post',
-	}
+  if (container) {
+    var filterTogglers = container.getElementsByClassName('js-toggle-filters');
+    var content = container.querySelector('.ajax-posts__posts');
+    var status = container.querySelector('.ajax-posts__status');
+  }
+
+  function init() {
+    if (container) {
+      addEventListeners();
+      setDefaults();
+    }
+  }
 
   /**
-   * Set initial params, and add event listeners
+   * Add event listeners
    */
-	function init() {
-		if (container) {
-			// Set the amoun of post per page
-			queryParams.quantity = parseInt(container.dataset.quantity, 10);
-			queryParams.postType = container.dataset.postType;
-
-			// Add event listeners with event propagination
-			on(container,'click', 'a[data-filter]', function(event) { 
-				handleFilterEvent(event.target);
-				event.preventDefault();
-				return true;
+  function addEventListeners() {
+      // Add event listeners with event propagination
+      on(container,'click', 'a[data-filter]', function(event) { 
+        handleFilterEvent(event.target);
+        event.preventDefault();
+        return true;
       });
 
       on(container, 'click', '.js-load-more', function(event) { 
-					handleLoadMoreEvent(event.target);
-					event.preventDefault();
-					return true;
-			});
+          handleLoadMoreEvent(event.target);
+          event.preventDefault();
+          return true;
+      });
 
       on(container, 'click', '.js-reset-filters', function() { 
           resetFilters();
@@ -43,8 +42,20 @@
       [].slice.call(filterTogglers).forEach(function(button){
         button.addEventListener('click', toggleFilters)
       });
-		}
-	}
+  }
+
+  /**
+   * Set default query variables
+   */
+  function setDefaults() {
+    queryParams = {
+      'page' : null,
+      'tax'  : {},
+      'quantity': parseInt(container.dataset.quantity, 10) || 0,
+      'postType': container.dataset.postType || 'post',
+      'language': filterPosts.language || null,
+    };
+  }
 
   /**
    * Update query and get posts after filter change
@@ -169,10 +180,12 @@
 		
 		request.onload = function() {
 
+      console.log(this.response);
+
       //remove load more button
       var loadMoreButton = content.querySelector('.js-load-more');
       if (loadMoreButton) {
-        content.removeChild(loadMoreButton);
+        content.removeChild(loadMoreButton.parentNode);
       }
       var response = JSON.parse(this.response);
     	if (this.status === 200) {

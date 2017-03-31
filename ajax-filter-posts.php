@@ -16,7 +16,7 @@
  * Plugin Name:       Ajax filter posts
  * Plugin URI:        http://www.robbertdekuiper.com
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           0.1
+ * Version:           0.2.0
  * Author:            Robbert de Kuiper
  * Author URI:        http://www.robbertdekuiper.com
  * License:           GPL-2.0+

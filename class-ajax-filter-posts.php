@@ -7,7 +7,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       http://www.robbertdekuiper.com
- * @since      0.1
+ * @since      0.1.0
  *
  * @package    Ajax_Filter_Posts
  */
@@ -20,7 +20,7 @@
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      0.1
+ * @since      0.1.0
  * @package    Ajax_Filter_Posts
  * @author     Robbert de Kuiper <mail@robbertdekuiper.com>
  */
@@ -40,6 +40,7 @@ class Ajax_Filter_Posts {
 	 */
 	protected $version;
 
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -50,7 +51,8 @@ class Ajax_Filter_Posts {
 	public function __construct() {
 
 		$this->plugin_name = 'ajax-filter-posts';
-		$this->version = '0.1';
+		$this->version = '0.2.0';
+
 		add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
 		add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
 		add_action('wp_ajax_process_filter_change', [$this, 'process_filter_change']);
@@ -64,20 +66,29 @@ class Ajax_Filter_Posts {
 	public function load_textdomain() {
     load_muplugin_textdomain( 'ajax-filter-posts', basename( dirname( __FILE__ )) . '/languages' );
 	}
+
 	/**
 	 * Load the required assets for this plugin.
 	 *
 	 */
-	public function add_scripts() {		
+	public function add_scripts() {
+
+		$script_variables = [
+      'nonce' => wp_create_nonce( 'filter-posts-nonce' ),
+      'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+      'timeoutMessage' => __('It took to long the get the posts. Please reload the page and try again.', 'ajax-filter-posts'),
+      'serverErrorMessage' => __('Got no response. Please reload the page and try again.', 'ajax-filter-posts'),
+    ];
+
+		// IF WPML is installed add language variable to set variable later during the query
+		// WPML can't figure out which language to query, when posts are loaded via AJAX.
+		if (ICL_LANGUAGE_CODE) {
+			$script_variables['language'] = ICL_LANGUAGE_CODE;
+		}
+
 		wp_enqueue_script( 'ajax-filter', plugins_url('/assets/js/ajax-filter-posts.js', __FILE__), [], '', true );
 		wp_enqueue_style( 'ajax-filter', plugins_url('/assets/css/ajax-filter-posts.css', __FILE__), []);
-		wp_localize_script( 'ajax-filter', 'filterPosts', array(
-        'nonce' => wp_create_nonce( 'filter-posts-nonce' ),
-        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-        'timeoutMessage' => __('It took to long the get the posts. Please reload the page and try again.', 'ajax-filter-posts'),
-        'serverErrorMessage' => __('Got no response. Please reload the page and try again.', 'ajax-filter-posts'),
-      )
-  	);
+		wp_localize_script( 'ajax-filter', 'filterPosts', $script_variables);
 	}
 
 	/**
@@ -155,6 +166,7 @@ class Ajax_Filter_Posts {
 	  $tax  = $this->get_tax_query_vars($_POST['params']['tax']);
 	  $page = intval($_POST['params']['page']);
 	  $quantity  = intval($_POST['params']['quantity']);
+	  $language = sanitize_text_field($_POST['params']['language']);
 
 	  $args = [
 	      'paged'          => $page,
@@ -163,7 +175,7 @@ class Ajax_Filter_Posts {
 	      'tax_query'      => $tax
 	  ];
 	  
-	 	$response = $this->get_filter_posts($args);
+	 	$response = $this->get_filter_posts($args, $language);
 	 	
 	 	if ($response) {
 	 		wp_send_json_success($response);
@@ -191,7 +203,7 @@ class Ajax_Filter_Posts {
 	 * @return Boolean        	true if is last page
 	 */
 	private function is_last_page($query) {
-		return $query->get( 'paged' ) >= $query->max_num_pages;
+		return $this->get_page_number($query) >= $query->max_num_pages;
 	}
 
   /**
@@ -251,8 +263,14 @@ class Ajax_Filter_Posts {
 	 * @param  array 	$args     	Arguments for the WordPress Query
 	 * @return string           	HTMl to be sent via Ajax
 	 */
-	public function get_filter_posts($args) {
-	    
+	public function get_filter_posts($args, $language) {
+	  
+
+	  if (!empty($language)) {
+	  	global $sitepress;
+			$sitepress->switch_lang( $language );
+	  }
+
 	  $query = new WP_Query($args);
 	  $response = [];
 	  

@@ -120,6 +120,10 @@
   border: 0;
 }
 
+.ajax-posts__load-more {
+  flex: 0 0 100%;
+}
+
 /* On small screen we can't see the posts when the filer is visible */
 @media screen and (max-width: 34rem) {
   .ajax-posts.is-expanded-filters .ajax-posts__show-recipes-text {
