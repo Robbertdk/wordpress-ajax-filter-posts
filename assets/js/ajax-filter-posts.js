@@ -176,7 +176,7 @@
 		var request = new XMLHttpRequest();
 		request.open('POST', filterPosts.ajaxUrl, true);
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		request.timeout = 2000; // time in milliseconds
+		request.timeout = 4000; // time in milliseconds
 		
 		request.onload = function() {
 

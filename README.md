@@ -23,6 +23,10 @@ This plugins uses no dependencies.
 - **post_per_page**
   Numbers of maximum posts to retreive at a time. Default 12.
 
+## Overwriting template files
+
+To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If I want a custom version of the loop, I copy the file `loop.php` to my theme in the folder `ajax-filter-posts/partials`.
+
 ## Motivation
 
 I build a lot of sites that needed a functionality like this and decided to create a plugin for it. Although there are a lot of plugins doing something like this, they usually add a lot of bloat and is very user centered. This is for a developer easier to implement, adept, update and keeps te code cleaner.

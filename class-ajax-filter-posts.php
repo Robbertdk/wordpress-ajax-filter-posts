@@ -51,7 +51,7 @@ class Ajax_Filter_Posts {
 	public function __construct() {
 
 		$this->plugin_name = 'ajax-filter-posts';
-		$this->version = '0.2.0';
+		$this->version = '0.2.1';
 
 		add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
 		add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
@@ -114,7 +114,9 @@ class Ajax_Filter_Posts {
 
 		$plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
 
-    return include(plugin_dir_path( __FILE__ ) . 'templates/base.php');
+		ob_start();
+	  include( $this->get_local_template('base.php') );
+    return ob_get_clean();
 	}
 
 	/**
@@ -154,7 +156,7 @@ class Ajax_Filter_Posts {
 	}
 
 	/**
-	 * Send new posts query via AJax after filters are changed in the frontend
+	 * Send new posts query via AJAX after filters are changed in the frontend
 	 * 
 	 * @return String HTML string with parsed posts or an error message
 	 */
@@ -264,8 +266,6 @@ class Ajax_Filter_Posts {
 	 * @return string           	HTMl to be sent via Ajax
 	 */
 	public function get_filter_posts($args, $language) {
-	  
-
 	  if (!empty($language)) {
 	  	global $sitepress;
 			$sitepress->switch_lang( $language );
@@ -275,9 +275,41 @@ class Ajax_Filter_Posts {
 	  $response = [];
 	  
 	  ob_start();
-	  include(plugin_dir_path( __FILE__ ) . 'templates/partials/loop.php'); ;
+	  include( $this->get_local_template('partials/loop.php'));
 	  $response['content'] = ob_get_clean();
 	  $response['found'] = $query->found_posts;
 	  return $response;
+	}
+
+	/**
+	 * Locate template.
+	 *
+	 * Locate the called template.
+	 * Search Order:
+	 * 1. /themes/theme/ajax-posts-filters/$template_name
+	 * 2. /plugins/ajax-filter-posts/templates/$template_name.
+	 *
+	 * @since 0.3.0
+	 *
+	 * @param 	string 	$template_name					Template to load.
+	 * @return 	string 													Path to the template file.
+	 */
+	public function get_local_template($template_name) {
+
+		if (empty($template_name)) return false;
+
+		$template = locate_template('ajax-filter-posts/' . $template_name);
+
+		// If template not in theme, get plugins template file.
+		if ( !$template ) {
+			$template = plugin_dir_path( __FILE__ ) . 'templates/' . $template_name;
+		}
+
+		if ( !file_exists( $template ) ) {
+			_doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', $template ), '4.6.0' );
+			return;
+		}
+
+		return $template;
 	}
 }

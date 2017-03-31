@@ -10,11 +10,11 @@
   <div class="ajax-posts__view">  
     <aside class="ajax-posts__filters">
     <?php if ( $query->have_posts() && $query->post_count > 1) : ?>
-        <?php include(plugin_dir_path( __FILE__ ) . 'partials/filters.php' ); ?>
+        <?php include( $this->get_local_template('partials/filters.php') ); ?>
     <?php endif; ?>
     </aside>
     <div class="ajax-posts__posts">
-        <?php include(plugin_dir_path( __FILE__ ) . 'partials/loop.php' ); ?>
+        <?php include( $this->get_local_template('partials/loop.php') ); ?>
     </div>
   </div>
   <div class="ajax-posts__spinner">
