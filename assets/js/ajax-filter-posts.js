@@ -78,7 +78,6 @@
   }
 
   function toggleFilters() {
-    console.log(container);
     container.classList.toggle('is-expanded-filters');
   }
 

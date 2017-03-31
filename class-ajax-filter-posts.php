@@ -77,6 +77,12 @@ class Ajax_Filter_Posts {
   	);
 	}
 
+	/**
+	 * Create shortcode
+	 * 
+	 * @param  Array 		$atts 	Array of given attributes
+	 * @return String       		HTML initial rendered by shortcode
+	 */
 	public function create_shortcode($atts) {
 
 		$attributes = shortcode_atts( array(
@@ -92,9 +98,17 @@ class Ajax_Filter_Posts {
     	'posts_per_page' => $attributes['posts_per_page'],
     ]);
 
+		$plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
+
     return include(plugin_dir_path( __FILE__ ) . 'templates/base.php');
 	}
 
+	/**
+	 * Get a list of filters and terms, based on the taxonomies set in the shortcode
+	 * 
+	 * @param  String 	$taxonomies 		Comma seperated list of taxonomies
+	 * @return Array             				List of taxonomies with terms
+	 */
 	protected function get_filterlist($taxonomies) {
 		$filterlists = explode(',', $taxonomies);
 		$filterlists = array_map('trim', $filterlists);
@@ -103,6 +117,12 @@ class Ajax_Filter_Posts {
 		return $filterlists;
 	}
 
+	/**
+	 * Get a list of filters and terms
+	 * 
+	 * @param  string 	$taxonomies 	A single taxonomy
+	 * @return Array             			Taxonomy name and list of terms associated with the taxonomy
+	 */
 	protected function get_termlist($taxonomies) {
 		$list = [];
 
@@ -119,6 +139,11 @@ class Ajax_Filter_Posts {
 		return $list;
 	}
 
+	/**
+	 * Send new posts query via AJax after filters are changed in the frontend
+	 * 
+	 * @return String HTML string with parsed posts or an error message
+	 */
 	public function process_filter_change() {
 
 		check_ajax_referer( 'filter-posts-nonce', 'nonce' );
@@ -135,7 +160,7 @@ class Ajax_Filter_Posts {
 	      'tax_query'      => $tax
 	  ];
 	  
-	 	$response = $this->get_filter_posts($args, $response);
+	 	$response = $this->get_filter_posts($args);
 	 	
 	 	if ($response) {
 	 		wp_send_json_success($response);
@@ -146,7 +171,7 @@ class Ajax_Filter_Posts {
 	}
 
 	/**
-	 * Converts the queried page to a real page
+	 * Converts the queried page number to a real page number
 	 * 
 	 * @param  Object 	$query 	WP Query
 	 * @return Integer        	Current page
@@ -166,6 +191,12 @@ class Ajax_Filter_Posts {
 		return $query->get( 'paged' ) >= $query->max_num_pages;
 	}
 
+  /**
+   * Get the query paramaters based on set filters
+   * 
+   * @param  array 	$taxonomies 	list of taxanomies with terms
+   * @return array 								taxonomies prepared for the WordPress Query
+   */
 	protected function get_tax_query_vars($taxonomies) {
 		$tax_query = [];
 
@@ -192,6 +223,13 @@ class Ajax_Filter_Posts {
 		return $tax_query;
 	}
 
+	/**
+	 * Check of the given thers are valid terms
+	 * 
+	 * @param  array 		$terms 	List of terms set by the filters
+	 * @param  string 	$tax   	Taxomy associated with the terms
+	 * @return array        		List of valid terms
+	 */
 	protected function get_valid_terms($terms, $tax) {
 		$valid_terms = [];
 		
@@ -203,14 +241,18 @@ class Ajax_Filter_Posts {
 		}
 		return $valid_terms;
 	}
-
+	
 	/**
-	 * Set up filtered query
+	 * Set up a filters query and parse the template
+	 * 
+	 * @param  array 	$args     	Arguments for the WordPress Query
+	 * @return string           	HTMl to be sent via Ajax
 	 */
-	public function get_filter_posts($args, $response) {
+	public function get_filter_posts($args) {
 	    
 	  $query = new WP_Query($args);
-
+	  $response = [];
+	  
 	  ob_start();
 	  include(plugin_dir_path( __FILE__ ) . 'templates/partials/loop.php'); ;
 	  $response['content'] = ob_get_clean();
