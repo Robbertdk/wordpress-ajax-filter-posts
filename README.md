@@ -28,7 +28,7 @@ To easily overwrite template files you can copy one or more of the files in the 
 
 ## Motivation
 
-I build a lot of sites that needed a functionality like this and decided to create a plugin for it. Although there are a lot of plugins doing something like this, they usually add a lot of bloat and is very user centered. This is for a developer easier to implement, adept, update and keeps te code cleaner.
+I build a lot of sites that needed a functionality like this and decided to create a plugin for it. Although there are a lot of plugins doing something like this, they usually add a lot of bloat and are not developer friendly. This plugin is for a developer easier to implement, easier to edit and keeps te codebase cleaner.
 
 ## Installation
 
