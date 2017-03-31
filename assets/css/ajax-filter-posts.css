@@ -302,6 +302,18 @@
   background: #999;
 }
 
+.ajax-posts__status {
+  margin: 1rem auto;
+  background: rgba(255, 0, 0, 0.53);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  font-weight: bold;
+}
+
 .ajax-posts .ajax-posts__toggle-filter {
   margin-left: 0;
 }

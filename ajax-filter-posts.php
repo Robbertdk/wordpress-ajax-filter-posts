@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              http://www.robbertdekuiper.com
- * @since             1.0.0
+ * @since             0.1
  * @package           Ajax_Filter_Posts
  *
  * @wordpress-plugin
  * Plugin Name:       Ajax filter posts
  * Plugin URI:        http://www.robbertdekuiper.com
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
+ * Version:           0.1
  * Author:            Robbert de Kuiper
  * Author URI:        http://www.robbertdekuiper.com
  * License:           GPL-2.0+
@@ -43,7 +43,7 @@ require plugin_dir_path( __FILE__ ) . 'class-ajax-filter-posts.php';
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    0.1
  */
 function run_ajax_filter_posts() {
 

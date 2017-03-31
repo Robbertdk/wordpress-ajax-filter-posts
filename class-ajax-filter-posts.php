@@ -7,24 +7,21 @@
  * public-facing side of the site and the admin area.
  *
  * @link       http://www.robbertdekuiper.com
- * @since      1.0.0
+ * @since      0.1
  *
  * @package    Ajax_Filter_Posts
- * @subpackage Ajax_Filter_Posts/includes
  */
 
 /**
  * The core plugin class.
  *
- * This is used to define internationalization, admin-specific hooks, and
- * public-facing site hooks.
+ * The plugin logic lives here
  *
  * Also maintains the unique identifier of this plugin as well as the current
  * version of the plugin.
  *
- * @since      1.0.0
+ * @since      0.1
  * @package    Ajax_Filter_Posts
- * @subpackage Ajax_Filter_Posts/includes
  * @author     Robbert de Kuiper <mail@robbertdekuiper.com>
  */
 class Ajax_Filter_Posts {
@@ -39,7 +36,7 @@ class Ajax_Filter_Posts {
 	/**
 	 * The current version of the plugin.
 	 *
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      String    $version    The current version of the plugin.
 	 */
 	protected $version;
 
@@ -47,21 +44,26 @@ class Ajax_Filter_Posts {
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
-	 * the public-facing side of the site.
+	 * Load the dependencies, define the locale, and set the hooks.
 	 *
 	 */
 	public function __construct() {
 
 		$this->plugin_name = 'ajax-filter-posts';
 		$this->version = '0.1';
-
+		add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
 		add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
 		add_action('wp_ajax_process_filter_change', [$this, 'process_filter_change']);
 		add_action('wp_ajax_nopriv_process_filter_change', [$this, 'process_filter_change']);
 		add_shortcode( 'ajax_filter_posts', [$this, 'create_shortcode']);
 	}
 
+	/**
+	 * Set the plugins language domain
+	 */
+	public function load_textdomain() {
+    load_muplugin_textdomain( 'ajax-filter-posts', basename( dirname( __FILE__ )) . '/languages' );
+	}
 	/**
 	 * Load the required assets for this plugin.
 	 *
@@ -72,7 +74,8 @@ class Ajax_Filter_Posts {
 		wp_localize_script( 'ajax-filter', 'filterPosts', array(
         'nonce' => wp_create_nonce( 'filter-posts-nonce' ),
         'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-        'timeoutMessage' => __('Something went wrong, please try again later.', $this->plugin_name),
+        'timeoutMessage' => __('It took to long the get the posts. Please reload the page and try again.', 'ajax-filter-posts'),
+        'serverErrorMessage' => __('Got no response. Please reload the page and try again.', 'ajax-filter-posts'),
       )
   	);
 	}
@@ -165,7 +168,7 @@ class Ajax_Filter_Posts {
 	 	if ($response) {
 	 		wp_send_json_success($response);
 	 	} else {
-	 		wp_send_json_error(__('Oops, something went wrong', $this->plugin_name));
+	 		wp_send_json_error(__('Oops, something went wrong. Please reload the page and try again.', 'ajax-filter-posts'));
 	 	}
 	 	die();
 	}

@@ -2,6 +2,8 @@
 
 	var container = document.querySelector('.js-container-async');
   var filterTogglers = container.getElementsByClassName('js-toggle-filters');
+  var content = container.querySelector('.ajax-posts__posts');
+  var status = container.querySelector('.ajax-posts__status');
 	var queryParams = {
 		'page' : null,
     'tax'  : {},
@@ -9,6 +11,9 @@
     'postType': 'post',
 	}
 
+  /**
+   * Set initial params, and add event listeners
+   */
 	function init() {
 		if (container) {
 			// Set the amoun of post per page
@@ -41,6 +46,11 @@
 		}
 	}
 
+  /**
+   * Update query and get posts after filter change
+   * 
+   * @param  NodeElement  filter  Clicked filter
+   */
 	function handleFilterEvent(filter) {
 
 		if (!filter.classList.contains('is-active')) {
@@ -57,11 +67,19 @@
 		getAJAXPosts({reset: true});
 	}
 
+  /**
+   * Get next page of posts
+   * 
+   * @param  NodeElement  button  Clicked load more button
+   */
   function handleLoadMoreEvent(button){
     updateQueryParams({ page: parseInt(button.dataset.page, 10) })
     getAJAXPosts({reset: false});
   }
 
+  /**
+   * Reset filters to empty values
+   */
   function resetFilters() {
     // Convert nodeList to array to prevent fail on for each
     var activeFilters = Array.prototype.slice.call(container.querySelectorAll('a[data-filter].is-active'));
@@ -77,10 +95,19 @@
     getAJAXPosts({reset: true});
   }
 
+  /**
+   * Toggle the filter class.
+   * Called via event listeners
+   */
   function toggleFilters() {
     container.classList.toggle('is-expanded-filters');
   }
 
+  /**
+   * Update te query parameters based on the filter change
+   * 
+   * @param  Array      params    params that will be changed
+   */
 	function updateQueryParams(params) {
 		queryParams.page = params.page;
 
@@ -108,6 +135,21 @@
 		}
 	}
 
+  /**
+   * Show the Error Reponse div
+   */
+  function showResponseMessage() {
+    status.style.display = 'block';
+    status.scrollIntoView({behavior: "smooth"});
+  }
+
+  /**
+   * Show the Error Reponse div
+   */
+  function hideResponseMessage() {
+    status.style.display = 'none';
+  }
+
 	/**
 	 * Get new posts via Ajax
 	 *
@@ -116,9 +158,6 @@
 	 * @return string server side generated HTML
 	 */
 	function getAJAXPosts(args) {
-
-		var content = container.querySelector('.ajax-posts__posts');
-		var status = container.querySelector('.ajax-posts__status');
 
     // Set status to querying
     container.classList.add('is-waiting');
@@ -135,17 +174,25 @@
       if (loadMoreButton) {
         content.removeChild(loadMoreButton);
       }
-
-			var response = JSON.parse(this.response).data;
+      var response = JSON.parse(this.response);
     	if (this.status === 200) {
-        if (args.reset){
-      		content.innerHTML = response.content;        
+        // If we have a succesfull query
+        if (response.success) {
+          // Hide error status button
+          hideResponseMessage();
+          // If we have to remove the show more button
+          if (args.reset) {
+        		content.innerHTML = response.data.content;        
+          } else {
+            content.innerHTML += response.data.content;
+          }          
         } else {
-          content.innerHTML += response.content;
+          status.innerHTML = response.data;
+          showResponseMessage();
         }
-	    }
-			else {
-				status.innerHTML = response.message;
+	    } else {
+				status.innerHTML = filterPosts.serverErrorMessage;
+        showResponseMessage();
 			}
       // Resolve status
       container.classList.remove('is-waiting');
@@ -153,6 +200,8 @@
 
 		request.ontimeout = function() {
 			status.innerHTML = filterPosts.timeoutMessage;
+      showResponseMessage();
+      container.classList.remove('is-waiting');
 		}
 
 		request.send(objectToQueryString({
@@ -203,10 +252,13 @@
 	 *
 	 * Boiled down from jQuery
 	 *
-	 * WordPress Ajax post request doesn't accept JSON only form-urlencoded!
+	 * WordPress Ajax post request doesn't accept JSON, only form-urlencoded!
 	 * Took me a while to get...
+   * 
 	 * Although seems not to be totally true: 
 	 * http://wordpress.stackexchange.com/questions/177554/allowing-admin-ajax-php-to-receive-application-json-instead-of-x-www-form-url
+   *
+   * But in this case we just convert the params object to a url encoded string, like our friend and foe jQuery does. 
 	 *
 	 */
 	function objectToQueryString(a) {
