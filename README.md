@@ -7,10 +7,9 @@ You can add posts and filters via a **shortcode** on any page.
 
 ```
 [ajax_filter_posts post_type='recipe' tax="meal_type, food_type, diet_type"  posts_per_page="12"]
-
 ```
 
-This plugins uses no dependencies.
+This plugins uses no dependencies, is translatable and WPML ready.
 
 ## Parameters
 
@@ -25,7 +24,7 @@ This plugins uses no dependencies.
 
 ## Overwriting template files
 
-To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If I want a custom version of the loop, I copy the file `loop.php` to my theme in the folder `ajax-filter-posts/partials`.
+To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If you want a custom version of `loop.php`, you copy the file to `<<your-public-folder>>/wp-content/themes/<<your-theme>>/ajax-filter-posts/partials`.
 
 ## Motivation
 
