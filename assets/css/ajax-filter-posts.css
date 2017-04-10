@@ -143,9 +143,14 @@
     FILTERS
 \*------------------------------------*/
 
+.ajax-posts__filterlist {
+  margin-bottom: 1rem;
+}
+
 .ajax-posts__filters ul {
     list-style-type: none;
     padding: 0;
+    margin-bottom: 0;
 }
 
 .ajax-posts__filter {
@@ -169,6 +174,44 @@
   background: none;
 }
 
+.ajax-posts__filterlist li:nth-child(n+6) {
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.2s ease;
+}
+
+.ajax-posts__filter-toggle {
+  padding: 5px; 
+}
+
+.ajax-posts__filter-toggle a:after {
+  margin-left: 5px;
+  content: "\25BE";
+  display: inline-block;
+}
+
+.ajax-posts__filter-toggle-hide {
+  display: none;
+}
+
+.ajax-posts__filter-toggle-hide:after {
+  transform: rotate(180deg);
+  position: relative;
+  top: 1px;
+}
+
+.ajax-posts__filterlist.is-collapsed li:nth-child(n+6) {
+  max-height: 35px;
+}
+
+.is-collapsed .ajax-posts__filter-toggle-hide {
+  display: block;
+}
+
+.is-collapsed .ajax-posts__filter-toggle-show {
+  display: none;
+}
+
 /*------------------------------------*\
     POSTS
 \*------------------------------------*/
@@ -179,6 +222,10 @@
 
 .ajax-posts__post article {
   overflow: hidden;
+}
+
+.ajax-posts__post > a {
+  display: block;
 }
 
 .ajax-posts__post img {
@@ -197,7 +244,7 @@
 }
 
 @media screen and (min-width: 35rem) and (max-width: 61rem) {
-  .is-expanded-filters .ajax-posts__post:nth-child(n+1) {
+  .is-expanded-filters .ajax-posts__post:nth-child(n+6) {
     margin-right: 50%; /* fake a second element to break the flow */
   }
 }

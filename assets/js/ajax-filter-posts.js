@@ -26,14 +26,20 @@
         return true;
       });
 
-      on(container, 'click', '.js-load-more', function(event) { 
-          handleLoadMoreEvent(event.target);
+      on(container, 'click', '.js-collapse-filterlist', function(event) { 
+          toggleFilterListCollapse(event);
           event.preventDefault();
           return true;
       });
 
       on(container, 'click', '.js-reset-filters', function() { 
           resetFilters();
+          event.preventDefault();
+          return true;
+      });
+
+      on(container, 'click', '.js-load-more', function(event) { 
+          handleLoadMoreEvent(event.target);
           event.preventDefault();
           return true;
       });
@@ -112,6 +118,10 @@
    */
   function toggleFilters() {
     container.classList.toggle('is-expanded-filters');
+  }
+
+  function toggleFilterListCollapse(event) {
+    event.target.parentNode.parentNode.classList.toggle('is-collapsed');
   }
 
   /**
