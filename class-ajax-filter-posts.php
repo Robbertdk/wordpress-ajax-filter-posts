@@ -64,7 +64,11 @@ class Ajax_Filter_Posts {
    * Set the plugins language domain
    */
   public function load_textdomain() {
-    load_muplugin_textdomain( 'ajax-filter-posts', basename( dirname( __FILE__ )) . '/languages' );
+    if (strpos( __FILE__, basename( WPMU_PLUGIN_DIR ))) {
+      load_muplugin_textdomain( 'ajax-filter-posts', basename( dirname( __FILE__ )) . '/languages' );
+    } else {
+      load_plugin_textdomain( 'ajax-filter-posts', false, basename(dirname( __FILE__ )) . '/languages' );
+    }
   }
 
   /**
@@ -82,7 +86,7 @@ class Ajax_Filter_Posts {
 
     // IF WPML is installed add language variable to set variable later during the query
     // WPML can't figure out which language to query, when posts are loaded via AJAX.
-    if (ICL_LANGUAGE_CODE) {
+    if (function_exists('icl_object_id')) {
       $script_variables['language'] = ICL_LANGUAGE_CODE;
     }
 
@@ -266,12 +270,13 @@ class Ajax_Filter_Posts {
    * @return string             HTMl to be sent via Ajax
    */
   public function get_filter_posts($args, $language) {
-    if (!empty($language)) {
+    if (function_exists('icl_object_id') && !empty($language)) {
       global $sitepress;
-      $sitepress->switch_lang( $language );
+        $sitepress->switch_lang( $language );
     }
 
     $query = new WP_Query($args);
+    $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
     $response = [];
     
     ob_start();
