@@ -146,7 +146,7 @@
    * Remove a term from the set of query params
    * 
    * @param  string   tax   taxonomy of the term to remove
-   * @param  {tring   term  term to remove
+   * @param  {string   term  term to remove
    */
   function removeQueryParam(tax, term) {
     if (queryParams.tax.hasOwnProperty(tax)) {
