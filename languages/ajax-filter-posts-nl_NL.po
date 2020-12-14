@@ -3,63 +3,80 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ajax-filter-posts\n"
-"POT-Creation-Date: 2017-03-31 12:12+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-14 21:18+0100\n"
 "PO-Revision-Date: \n"
-"Report-Msgid-Bugs-To: Robbert de Kuiper <mail@robbertdekuiper.com>\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Textdomain-Support: yesX-Generator: Poedit 1.6.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html_x:1,2c;esc_html__;esc_attr_e;esc_attr_x:1,2c;esc_attr__;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,_nc:4c,1,2\n"
+"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html_x:1,2c;esc_html__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_attr__;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;"
+"_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,"
+"_nc:4c,1,2\n"
 "X-Poedit-Basepath: ..\n"
-"Language-Team: \n"
-"X-Generator: Poedit 2.0\n"
-"Last-Translator: \n"
-"Language: nl\n"
+"X-Generator: Poedit 2.4.1\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: class-ajax-filter-posts.php:78
-msgid "It took to long the get the posts. Please reload the page and try again."
-msgstr "Het laden van de berichten duurde te lang. Herlaad de pagina en probeer het nog een keer."
+#: class-ajax-filter-posts.php:83
+msgid ""
+"It took to long the get the posts. Please reload the page and try again."
+msgstr ""
+"Het laden van de berichten duurde te lang. Herlaad de pagina en probeer het "
+"nog een keer."
 
-#: class-ajax-filter-posts.php:79
+#: class-ajax-filter-posts.php:84
 msgid "Got no response. Please reload the page and try again."
-msgstr "Geen reactie van de server ontvangen. Herlaad de pagina en probeer het nog een keer."
+msgstr ""
+"Geen reactie van de server ontvangen. Herlaad de pagina en probeer het nog "
+"een keer."
 
-#: class-ajax-filter-posts.php:172
+#: class-ajax-filter-posts.php:191
 msgid "Oops, something went wrong. Please reload the page and try again."
-msgstr "Oeps, er ging iets verkeerd. Herlaad de pagina en probeer het nog een keer."
+msgstr ""
+"Oeps, er ging iets verkeerd. Herlaad de pagina en probeer het nog een keer."
 
-#: templates/base.php:4
+#: templates/base.php:5
 #, php-format
 msgid "Filter %s"
 msgstr "Filter %s"
 
-#: templates/base.php:5
+#: templates/base.php:6
 #, php-format
 msgid "Show %s"
 msgstr "Toon %s"
 
-#: templates/base.php:6
+#: templates/base.php:7
 msgid "Hide filters"
 msgstr "Verberg filters"
 
-#: templates/base.php:17
+#: templates/base.php:21
 msgid "Loading"
 msgstr "Laden"
 
-#: templates/partials/loop.php:14
+#: templates/partials/filters.php:15
+msgid "Show more"
+msgstr "Toon meer"
+
+#: templates/partials/filters.php:16
+msgid "Show less"
+msgstr "Toon minder"
+
+#: templates/partials/loop.php:15
 msgid "Load more"
 msgstr "Meer laden"
 
-#: templates/partials/loop.php:21
+#: templates/partials/loop.php:23
 #, php-format
 msgid "Oh, we couldn't find any %s"
 msgstr "Oh, we kunnen geen %s vinden"
 
-#: templates/partials/loop.php:22
+#: templates/partials/loop.php:24
 #, php-format
 msgid "Try different filters or <a %s> reset them all.</a>"
 msgstr "Probeer andere filters uit of <a %s> herstel ze allemaal.</a>"
