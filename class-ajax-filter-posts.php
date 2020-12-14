@@ -148,9 +148,11 @@ class Ajax_Filter_Posts {
 
     foreach ($taxonomies as $taxonomy) {
       $terms = get_terms($taxonomy);
+      $taxonomy_data = get_taxonomy($taxonomy);
       if (!empty($terms)) {
         $list[] = [
-          'name' => get_taxonomy($taxonomy)->labels->singular_name,
+          'name' => $taxonomy_data->labels->singular_name,
+          'id' => 'taxonomy-' . str_replace('_', '-', $taxonomy_data->name),
           'filters' => $terms,
         ];        
       }
