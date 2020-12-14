@@ -51,7 +51,7 @@ class Ajax_Filter_Posts {
   public function __construct() {
 
     $this->plugin_name = 'ajax-filter-posts';
-    $this->version = '0.3.0';
+    $this->version = '0.4.0';
 
     add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
     add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
@@ -104,9 +104,10 @@ class Ajax_Filter_Posts {
   public function create_shortcode($atts) {
 
     $attributes = shortcode_atts( array(
-        'post_type'=> 'post',
-        'tax'      => ['post_tag'],
-        'posts_per_page' => 12, // How many posts per page,
+        'post_type'      => 'post',
+        'tax'            => ['post_tag'],
+        'posts_per_page' => 12,
+        'multiselect'    => 'true'
     ), $atts, $this->plugin_name );
 
     $filterlists = $this->get_filterlist($attributes['tax']);
@@ -148,9 +149,11 @@ class Ajax_Filter_Posts {
 
     foreach ($taxonomies as $taxonomy) {
       $terms = get_terms($taxonomy);
+      $taxonomy_data = get_taxonomy($taxonomy);
       if (!empty($terms)) {
         $list[] = [
-          'name' => get_taxonomy($taxonomy)->labels->singular_name,
+          'name' => $taxonomy_data->labels->singular_name,
+          'id' => 'taxonomy-' . str_replace('_', '-', $taxonomy_data->name),
           'filters' => $terms,
         ];        
       }

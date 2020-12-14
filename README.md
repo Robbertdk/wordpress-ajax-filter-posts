@@ -22,6 +22,9 @@ This plugins uses no dependencies, is translatable and WPML ready.
 - **post_per_page**
   Numbers of maximum posts to retreive at a time. Default 12.
 
+- **multiselect**
+  Allow one or more active filters per taxonomy. Defaults to 'true': allow more active filters
+
 ## Overwriting template files
 
 To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If you want a custom version of `loop.php`, you copy the file to `<<your-public-folder>>/wp-content/themes/<<your-theme>>/ajax-filter-posts/partials`.
