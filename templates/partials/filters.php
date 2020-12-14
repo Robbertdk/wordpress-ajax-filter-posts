@@ -1,7 +1,7 @@
 <?php foreach ($filterlists as $filterlist) : ?>
   <div class="ajax-posts__filterlist">
     <h3><?= $filterlist['name'] ?></h3>
-    <ul>
+    <ul class="ajax-post__filter-category <?php echo esc_html( $filterlist['id'] ); ?>">
       <?php foreach ($filterlist['filters'] as $filter) : ?>
         <li>
           <a href="<?= get_term_link( $filter, $filter->taxonomy ); ?>" class="ajax-posts__filter" data-filter="<?= $filter->taxonomy; ?>" data-term="<?= $filter->slug; ?>">
