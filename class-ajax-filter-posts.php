@@ -104,9 +104,10 @@ class Ajax_Filter_Posts {
   public function create_shortcode($atts) {
 
     $attributes = shortcode_atts( array(
-        'post_type'=> 'post',
-        'tax'      => ['post_tag'],
-        'posts_per_page' => 12, // How many posts per page,
+        'post_type'      => 'post',
+        'tax'            => ['post_tag'],
+        'posts_per_page' => 12,
+        'multiselect'    => 'true'
     ), $atts, $this->plugin_name );
 
     $filterlists = $this->get_filterlist($attributes['tax']);
