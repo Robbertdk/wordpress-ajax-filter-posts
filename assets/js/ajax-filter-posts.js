@@ -32,7 +32,7 @@
           return true;
       });
 
-      on(container, 'click', '.js-reset-filters', function() { 
+      on(container, 'click', '.js-reset-filters', function(event) { 
           resetFilters();
           event.preventDefault();
           return true;
@@ -59,7 +59,7 @@
       'tax'  : {},
       'quantity': parseInt(container.dataset.quantity, 10) || 0,
       'postType': container.dataset.postType || 'post',
-      'language': filterPosts.language || null,
+      'multiselect': container.dataset.multiselect === 'true',
     };
   }
 
@@ -69,8 +69,11 @@
    * @param  NodeElement  filter  Clicked filter
    */
   function handleFilterEvent(filter) {
-
     if (!filter.classList.contains('is-active')) {
+      // If we only allow one select per filter, deselect the other filter
+      if (!queryParams.multiselect) {
+        deSelectSiblingFilters(filter);
+      }
       filter.classList.add('is-active');
       updateQueryParams({
         page: 1,
@@ -82,6 +85,20 @@
       removeQueryParam(filter.dataset.filter, filter.dataset.term);
     }
     getAJAXPosts({reset: true});
+  }
+
+  /**
+   * Deselect siblings filters when only one term per taxoomy is allowed
+   * 
+   * @param  NodeElement  filter  Clicked filter
+   */
+  function deSelectSiblingFilters(filter) {
+    var selector = '.ajax-posts__filter.is-active[data-filter=' + filter.dataset.filter + ']';
+    var activeSiblingFilters = container.querySelectorAll(selector);
+    activeSiblingFilters.forEach(function(siblingFilter) {
+      siblingFilter.classList.remove('is-active');
+      removeQueryParam(siblingFilter.dataset.filter, siblingFilter.dataset.term);
+    });
   }
 
   /**
@@ -189,8 +206,6 @@
     request.timeout = 4000; // time in milliseconds
     
     request.onload = function() {
-
-      console.log(this.response);
 
       //remove load more button
       var loadMoreButton = content.querySelector('.js-load-more');
