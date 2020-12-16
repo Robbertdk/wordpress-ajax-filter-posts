@@ -3,7 +3,6 @@
   var queryParams = null;
   var container = document.querySelector('.js-container-async');
   if (container) {
-    var filterTogglers = container.getElementsByClassName('js-toggle-filters');
     var content = container.querySelector('.ajax-posts__posts');
     var status = container.querySelector('.ajax-posts__status');
   }
@@ -42,11 +41,6 @@
           handleLoadMoreEvent(event.target);
           event.preventDefault();
           return true;
-      });
-
-      // Add event listner on all filter toggle buttons
-      [].slice.call(filterTogglers).forEach(function(button){
-        button.addEventListener('click', toggleFilters)
       });
   }
 
@@ -127,14 +121,6 @@
     queryParams.tax = {};
     queryParams.page = 1;
     getAJAXPosts({reset: true});
-  }
-
-  /**
-   * Toggle the filter class.
-   * Called via event listeners
-   */
-  function toggleFilters() {
-    container.classList.toggle('is-expanded-filters');
   }
 
   function toggleFilterListCollapse(event) {
