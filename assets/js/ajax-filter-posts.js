@@ -89,7 +89,7 @@
   function deSelectSiblingFilters(filter) {
     var selector = '.ajax-posts__filter.is-active[data-filter=' + filter.dataset.filter + ']';
     var activeSiblingFilters = container.querySelectorAll(selector);
-    activeSiblingFilters.forEach(function(siblingFilter) {
+    [].forEach.call(activeSiblingFilters, function(siblingFilter) {
       siblingFilter.classList.remove('is-active');
       removeQueryParam(siblingFilter.dataset.filter, siblingFilter.dataset.term);
     });
@@ -113,7 +113,7 @@
     var activeFilters = Array.prototype.slice.call(container.querySelectorAll('a[data-filter].is-active'));
 
     // Remove active classes
-    activeFilters.forEach(function(filter){
+    [].forEach.call(activeFilters, function(filter){
       filter.classList.remove('is-active');
     });
 
