@@ -112,7 +112,7 @@ class Ajax_Filter_Posts {
 
     $filterlists = $this->get_filterlist($attributes['tax']);
 
-    $query = new WP_Query([
+    $query = $this->query_posts([
       'post_type' => $attributes['post_type'],
       'posts_per_page' => $attributes['posts_per_page'],
     ]);
@@ -122,6 +122,19 @@ class Ajax_Filter_Posts {
     ob_start();
     include( $this->get_local_template('base.php') );
     return ob_get_clean();
+  }
+
+  /**
+   * Query the posts with the given arguments
+   * This function is called for the original query and for the queries when filters are applied
+   *
+   * @param array $args a list of arguments
+   *
+   * @return WP_Query a new instance of WP Query
+   */
+  protected function query_posts($args) {
+    $query_args = apply_filters('ajax_filter_posts_query_args', $args);
+    return new WP_Query($query_args);
   }
 
   /**
@@ -278,7 +291,7 @@ class Ajax_Filter_Posts {
         $sitepress->switch_lang( $language );
     }
 
-    $query = new WP_Query($args);
+    $query = $this->query_posts($args);
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
     $response = [];
     
