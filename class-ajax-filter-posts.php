@@ -102,7 +102,6 @@ class Ajax_Filter_Posts {
    * @return String           HTML initial rendered by shortcode
    */
   public function create_shortcode($atts) {
-
     $attributes = shortcode_atts( array(
         'post_type'      => 'post',
         'tax'            => ['post_tag'],
@@ -185,6 +184,15 @@ class Ajax_Filter_Posts {
     check_ajax_referer( 'filter-posts-nonce', 'nonce' );
       
     $post_type = sanitize_text_field($_POST['params']['postType']);
+
+    // The post_type argument is the same argument as set in the shortcode
+    // But because we receive the post type from the POST request, the user can alter the post_type argument
+    // So prevent query posts thats are not viewable or do not exist
+    if ( !is_post_type_viewable($post_type) ) {
+      wp_send_json_error(__("Something went wrong. The posts you've requested does not exist or is not viewable.", 'ajax-filter-posts'));
+      die();
+    }
+
     $tax  = $this->get_tax_query_vars($_POST['params']['tax']);
     $page = intval($_POST['params']['page']);
     $quantity  = intval($_POST['params']['quantity']);
