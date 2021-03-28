@@ -162,7 +162,7 @@ class Ajax_Filter_Posts {
 
     if ( !in_array($attributes['orderby'], $this->allowed_orderby_values) ) {
       // don't allow orderby values that are not supported
-      return new WP_Error('Invalid orderby attribute', __("Something went wrong. The posts could not be sorted with the given orderby method", 'ajax-filter-posts'));
+      return new WP_Error('Invalid orderby attribute', __("Something went wrong. The posts could not be sorted with the given orderby method.", 'ajax-filter-posts'));
     }
 
     return $attributes;

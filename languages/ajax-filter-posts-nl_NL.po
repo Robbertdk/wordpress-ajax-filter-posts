@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ajax-filter-posts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-14 21:18+0100\n"
+"POT-Creation-Date: 2021-03-28 22:13+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,42 +20,58 @@ msgstr ""
 "_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,"
 "_nc:4c,1,2\n"
 "X-Poedit-Basepath: ..\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: class-ajax-filter-posts.php:83
+#: class-ajax-filter-posts.php:107
 msgid ""
 "It took to long the get the posts. Please reload the page and try again."
 msgstr ""
 "Het laden van de berichten duurde te lang. Herlaad de pagina en probeer het "
 "nog een keer."
 
-#: class-ajax-filter-posts.php:84
+#: class-ajax-filter-posts.php:108
 msgid "Got no response. Please reload the page and try again."
 msgstr ""
 "Geen reactie van de server ontvangen. Herlaad de pagina en probeer het nog "
 "een keer."
 
-#: class-ajax-filter-posts.php:191
+#: class-ajax-filter-posts.php:160
+msgid ""
+"Something went wrong. The posts you've requested does not exist or is not "
+"viewable."
+msgstr ""
+"Er ging iets verkeerd. De berichten die wilde ophalen bestaan niet of zijn "
+"niet publiek toegankelijk."
+
+#: class-ajax-filter-posts.php:165
+msgid ""
+"Something went wrong. The posts could not be sorted with the given orderby "
+"method."
+msgstr ""
+"Er ging iets verkeerd. De berichten kunnen niet gesorteerd worden volgende "
+"de gegeven sorteermethode."
+
+#: class-ajax-filter-posts.php:264
 msgid "Oops, something went wrong. Please reload the page and try again."
 msgstr ""
 "Oeps, er ging iets verkeerd. Herlaad de pagina en probeer het nog een keer."
 
-#: templates/base.php:5
+#: templates/base.php:12
 #, php-format
 msgid "Filter %s"
 msgstr "Filter %s"
 
-#: templates/base.php:6
+#: templates/base.php:13
 #, php-format
 msgid "Show %s"
 msgstr "Toon %s"
 
-#: templates/base.php:7
+#: templates/base.php:14
 msgid "Hide filters"
 msgstr "Verberg filters"
 
-#: templates/base.php:21
+#: templates/base.php:28
 msgid "Loading"
 msgstr "Laden"
 
