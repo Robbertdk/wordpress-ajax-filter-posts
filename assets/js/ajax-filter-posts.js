@@ -59,6 +59,8 @@
       'tax'  : {},
       'quantity': parseInt(container.dataset.quantity, 10) || 0,
       'postType': container.dataset.postType || 'post',
+      'orderby':  container.dataset.orderby || 'date',
+      'order':  container.dataset.order || 'DESC',
       'multiselect': container.dataset.multiselect === 'true',
     };
   }

@@ -3,6 +3,8 @@
   data-post-type="<?= $attributes['post_type']; ?>"
   data-quantity="<?= $attributes['posts_per_page']; ?>"
   data-multiselect="<?= $attributes['multiselect']; ?>"
+  data-orderby="<?= $attributes['orderby']; ?>"
+  data-order="<?= $attributes['order']; ?>"
 >
   <div class="ajax-posts__status" style="display:none;"></div>
   <?php if ( $query->have_posts() && $query->post_count > 1) : ?>
