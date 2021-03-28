@@ -40,6 +40,30 @@ class Ajax_Filter_Posts {
    */
   protected $version;
 
+  protected $default_shortcode_args = array(
+    'post_type'      => 'post',
+    'posts_per_page' => 12,
+    'order'          => 'DESC',
+    'orderby'        => 'date',
+    'tax'            => ['post_tag'],
+    'multiselect'    => 'true'
+  );
+
+  protected $allowed_orderby_values = array(
+    'ID',
+    'author',
+    'title',
+    'name',
+    'type',
+    'date',
+    'modified',
+    'parent',
+    'rand',
+    'comment_count',
+    'relevance',
+    'menu_order',
+  );
+
 
   /**
    * Define the core functionality of the plugin.
@@ -102,18 +126,24 @@ class Ajax_Filter_Posts {
    * @return String           HTML initial rendered by shortcode
    */
   public function create_shortcode($atts) {
-    $attributes = shortcode_atts( array(
-        'post_type'      => 'post',
-        'tax'            => ['post_tag'],
-        'posts_per_page' => 12,
-        'multiselect'    => 'true'
-    ), $atts, $this->plugin_name );
+    
+    $attributes = shortcode_atts( $this->default_shortcode_args, $atts, $this->plugin_name );
+
+    // Check if the set attributes are allowed
+    $attributes = $this->validate_attributes($attributes);
+
+    if ( is_wp_error($attributes) ) {
+      echo $attributes->get_error_message();
+      return;
+    }
 
     $filterlists = $this->get_filterlist($attributes['tax']);
 
     $query = $this->query_posts([
-      'post_type' => $attributes['post_type'],
+      'post_type'      => $attributes['post_type'],
       'posts_per_page' => $attributes['posts_per_page'],
+      'order'          => $attributes['order'],
+      'orderby'        => $attributes['orderby'],
     ]);
 
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
@@ -121,6 +151,21 @@ class Ajax_Filter_Posts {
     ob_start();
     include( $this->get_local_template('base.php') );
     return ob_get_clean();
+  }
+
+  protected function validate_attributes($attributes) {
+
+    // So prevent query posts thats are not viewable or do not exist
+    if ( !is_post_type_viewable($attributes['post_type']) ) {
+      return new WP_Error('Posts not viewable', __("Something went wrong. The posts you've requested does not exist or is not viewable.", 'ajax-filter-posts'));
+    }
+
+    if ( !in_array($attributes['orderby'], $this->allowed_orderby_values) ) {
+      // don't allow orderby values that are not supported
+      return new WP_Error('Invalid orderby attribute', __("Something went wrong. The posts could not be sorted with the given orderby method.", 'ajax-filter-posts'));
+    }
+
+    return $attributes;
   }
 
   /**
@@ -182,30 +227,36 @@ class Ajax_Filter_Posts {
   public function process_filter_change() {
 
     check_ajax_referer( 'filter-posts-nonce', 'nonce' );
-      
-    $post_type = sanitize_text_field($_POST['params']['postType']);
-
-    // The post_type argument is the same argument as set in the shortcode
-    // But because we receive the post type from the POST request, the user can alter the post_type argument
-    // So prevent query posts thats are not viewable or do not exist
-    if ( !is_post_type_viewable($post_type) ) {
-      wp_send_json_error(__("Something went wrong. The posts you've requested does not exist or is not viewable.", 'ajax-filter-posts'));
+    
+    $attributes = array(
+      'post_type' => sanitize_text_field($_POST['params']['postType']),
+      'tax'      => $this->get_tax_query_vars($_POST['params']['tax']),
+      'page'      => intval($_POST['params']['page']),
+      'orderby'   => $_POST['params']['orderby'],
+      'order'     => $_POST['params']['order'],
+      'quantity' => intval($_POST['params']['quantity']),
+      'language'  => sanitize_text_field($_POST['params']['language']),
+    );
+    
+    // Abort on false attributes
+    // Because we get these attributes via AJAX the user could have changed the attributes
+    $attributes = $this->validate_attributes($attributes);
+    
+    if ( is_wp_error($attributes) ) {
+      wp_send_json_error( $attributes->get_error_message() );
       die();
     }
 
-    $tax  = $this->get_tax_query_vars($_POST['params']['tax']);
-    $page = intval($_POST['params']['page']);
-    $quantity  = intval($_POST['params']['quantity']);
-    $language = sanitize_text_field($_POST['params']['language']);
-
-    $args = [
-        'paged'          => $page,
-        'post_type'      => $post_type,
-        'posts_per_page' => $quantity,
-        'tax_query'      => $tax
-    ];
+    $query_args = array(
+        'paged'          => $attributes['page'],
+        'post_type'      => $attributes['post_type'],
+        'posts_per_page' => $attributes['quantity'],
+        'tax_query'      => $attributes['tax'],
+        'orderby'        => $attributes['orderby'],
+        'order'          => $attributes['order'],
+    );
     
-    $response = $this->get_filter_posts($args, $language);
+    $response = $this->get_filter_posts($query_args, $language);
     
     if ($response) {
       wp_send_json_success($response);
