@@ -23,12 +23,13 @@ This plugins uses no dependencies, is translatable and WPML ready.
   Numbers of maximum posts to retreive at a time. Default 12.
 
 - **orderby**
-  Value to order the posts by. Supports `ID`, `author`, `title`, `name`, `type`, `date`, `modified`, `parent`, `rand`, `comment_count`, `relevance`, and `menu_order`. Does not support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in` because additionals arguments needs to be set with these orderby values. You can [add your own query arguments via a filter hook](#query-arugments) if you need that support. Default to `date`.
+  Value to order the posts by. Supports `ID`, `author`, `title`, `name`, `type`, `date`, `modified`, `parent`, `rand`, `comment_count`, `relevance`, and `menu_order`.
+  Does **not** support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in` because additionals arguments needs to be set with these orderby values. You can [add your own query arguments via a filter hook](#query-arugments) if you need that support. Defaults to `date`.
 
-  Check the [WordPress documentation on Query arguments](https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters)for more information
+  Check the [WordPress documentation on Query arguments](https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters) for more information.
 
 - **order**
-  Order the posts ascending or descendings. Support `ASC` (1, 2, 3; a, b, c). and `DESC` (3, 2, 1; c, b, a). Defaults to `DESC`.
+  Order the posts ascending or descendings. Support `ASC` (1, 2, 3; a, b, c) and `DESC` (3, 2, 1; c, b, a). Defaults to `DESC`.
 
 - **multiselect**
   Allow one or more active filters per taxonomy. Defaults to `true`: allow more active filters
