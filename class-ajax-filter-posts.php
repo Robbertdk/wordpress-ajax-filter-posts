@@ -166,6 +166,12 @@ class Ajax_Filter_Posts {
     return ob_get_clean();
   }
 
+  /**
+   * Validate shrotode attributes
+   * 
+   * @param  Array    $atts   Array of given attributes
+   * @return Array|WP_Error   given attributes or an erorr when attributes are not valid
+   */
   protected function validate_attributes($attributes) {
 
     // So prevent query posts thats are not viewable or do not exist
@@ -333,7 +339,7 @@ class Ajax_Filter_Posts {
   }
 
   /**
-   * Check of the given thers are valid terms
+   * Check of the given terms are valid terms
    * 
    * @param  array    $terms  List of terms set by the filters
    * @param  string   $tax    Taxomy associated with the terms
