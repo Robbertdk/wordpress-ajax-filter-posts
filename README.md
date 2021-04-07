@@ -34,6 +34,9 @@ This plugins uses no dependencies, is translatable and WPML ready.
 - **multiselect**
   Allow one or more active filters per taxonomy. Defaults to `true`: allow more active filters
 
+- **id**
+  Usefull for custom styling or to target specific instances of the shortcode in the filter hooks. Default not set.
+
 ## Overwriting template files
 
 To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If you want a custom version of `loop.php`, you copy the file to `<<your-public-folder>>/wp-content/themes/<<your-theme>>/ajax-filter-posts/partials`.
@@ -58,11 +61,12 @@ For example you can add an extra taxonomy query.
 /**
  * Add the diet term on all the queries made with the shortcode ajax_filter_posts
  *
- * @param array $args arguments set by the plugin Ajax Filter posts
+ * @param array $query_args 			query arguments set by the plugin Ajax Filter posts
+ * @param array $shortcode_attributes 	all shortcode attributes
  *
- * @return array a updated list of arguments
+ * @return array a updated list of query arguments
  */
-function my_site_set_additional_term_for_ajax_filter_posts($args) {
+function my_site_set_additional_term_for_ajax_filter_posts($query_args, $shortcode_attributes) {
 
 	// Only show posts with the term vegan in the diet taxonomy
 	$diet_tax_query_args = [
@@ -74,23 +78,23 @@ function my_site_set_additional_term_for_ajax_filter_posts($args) {
 	];
 
 	// If there are already tax queries args set, merge my query args with the set args
-	if ( !empty( $args['tax_query'] ) ) {
-		$prev_set_tax_args = $args['tax_query'];
-		$args['tax_query'] = [
+	if ( !empty( $query_args['tax_query'] ) ) {
+		$prev_set_tax_args = $query_args['tax_query'];
+		$query_args['tax_query'] = [
 			// Set the relationship to AND: we want only post with my term and the set terms by the user
-      // Also see https://developer.wordpress.org/reference/classes/wp_query/#taxonomy-parameters
+      		// Also see https://developer.wordpress.org/reference/classes/wp_query/#taxonomy-parameters
 			'relation' => 'AND',
 			$diet_tax_query_args,
 			$prev_set_tax_args
 		];
-		return $args;
+		return $query_args;
 	}
 
 	// If there are no tax queries args already set, just add it
-	$args['tax_query'] = $diet_tax_query_args;
-	return $args;
+	$query_args['tax_query'] = $diet_tax_query_args;
+	return $query_args;
 }
-add_filter('ajax_filter_posts_query_args', 'my_site_set_additional_term_for_ajax_filter_posts');
+add_filter('ajax_filter_posts_query_args', 'my_site_set_additional_term_for_ajax_filter_posts', 10, 2);
 ```
 
 ## License

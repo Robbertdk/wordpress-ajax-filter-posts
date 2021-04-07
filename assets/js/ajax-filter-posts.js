@@ -55,6 +55,7 @@
    */
   function setDefaults() {
     queryParams = {
+      'id' : container.dataset.id || null,
       'page' : null,
       'tax'  : {},
       'quantity': parseInt(container.dataset.quantity, 10) || 0,
