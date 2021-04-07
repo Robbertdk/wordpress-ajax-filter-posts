@@ -40,6 +40,11 @@ class Ajax_Filter_Posts {
    */
   protected $version;
 
+  /**
+   * Defaults arguments that can be overwritten vua the shortcode attributes
+   *
+   * @var      array    $default_shortcode_args    list of arguments
+   */
   protected $default_shortcode_args = array(
     'post_type'      => 'post',
     'posts_per_page' => 12,
@@ -49,6 +54,14 @@ class Ajax_Filter_Posts {
     'multiselect'    => 'true'
   );
 
+  /**
+   * Allowed orderby values a user can add as an value in the orderby shortcode attribute
+   * 
+   * Does not support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in`
+   * because additionals arguments needs to be set with these orderby values.
+   *
+   * @var      array    $allowed_orderby_values    flat list of orderby values
+   */
   protected $allowed_orderby_values = array(
     'ID',
     'author',
