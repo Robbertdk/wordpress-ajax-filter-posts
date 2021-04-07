@@ -43,15 +43,16 @@ class Ajax_Filter_Posts {
   /**
    * Defaults arguments that can be overwritten vua the shortcode attributes
    *
-   * @var      array    $default_shortcode_args    list of arguments
+   * @var      array    $default_shortcode_attributes    list of arguments
    */
-  protected $default_shortcode_args = array(
+  protected $default_shortcode_attributes = array(
+    'id'             => null, // a user can add a custom id
     'post_type'      => 'post',
     'posts_per_page' => 12,
     'order'          => 'DESC',
     'orderby'        => 'date',
     'tax'            => ['post_tag'],
-    'multiselect'    => 'true'
+    'multiselect'    => 'true',
   );
 
   /**
@@ -92,9 +93,9 @@ class Ajax_Filter_Posts {
 
     add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
     add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
-    add_action('wp_ajax_process_filter_change', [$this, 'process_filter_change']);
-    add_action('wp_ajax_nopriv_process_filter_change', [$this, 'process_filter_change']);
-    add_shortcode( 'ajax_filter_posts', [$this, 'create_shortcode']);
+    add_action( 'wp_ajax_process_filter_change', [$this, 'process_filter_change'] );
+    add_action( 'wp_ajax_nopriv_process_filter_change', [$this, 'process_filter_change'] );
+    add_shortcode( 'ajax_filter_posts', [$this, 'create_shortcode'] );
   }
 
   /**
@@ -138,9 +139,9 @@ class Ajax_Filter_Posts {
    * @param  Array    $atts   Array of given attributes
    * @return String           HTML initial rendered by shortcode
    */
-  public function create_shortcode($atts) {
+  public function create_shortcode($given_attributes) {
     
-    $attributes = shortcode_atts( $this->default_shortcode_args, $atts, $this->plugin_name );
+    $attributes = shortcode_atts( $this->default_shortcode_attributes, $given_attributes, $this->plugin_name );
 
     // Check if the set attributes are allowed
     $attributes = $this->validate_attributes($attributes);
@@ -157,7 +158,7 @@ class Ajax_Filter_Posts {
       'posts_per_page' => $attributes['posts_per_page'],
       'order'          => $attributes['order'],
       'orderby'        => $attributes['orderby'],
-    ]);
+    ], $attributes);
 
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
 
@@ -191,12 +192,13 @@ class Ajax_Filter_Posts {
    * Query the posts with the given arguments
    * This function is called for the original query and for the queries when filters are applied
    *
-   * @param array $args a list of arguments
+   * @param array $args a list of query arguments
+   * @param array $shortcode_attributes a list of all shortcode attributes
    *
    * @return WP_Query a new instance of WP Query
    */
-  protected function query_posts($args) {
-    $query_args = apply_filters('ajax_filter_posts_query_args', $args);
+  protected function query_posts($args, $shortcode_attributes) {
+    $query_args = apply_filters('ajax_filter_posts_query_args', $args, $shortcode_attributes);
     return new WP_Query($query_args);
   }
 
@@ -248,12 +250,14 @@ class Ajax_Filter_Posts {
     check_ajax_referer( 'filter-posts-nonce', 'nonce' );
     
     $attributes = array(
+      // when the id is null, the id is not transfered
+      'id'        => !empty($_POST['params']['id']) ? sanitize_text_field($_POST['params']['id']) : null,
       'post_type' => sanitize_text_field($_POST['params']['postType']),
-      'tax'      => $this->get_tax_query_vars($_POST['params']['tax']),
+      'tax'       => $this->get_tax_query_vars($_POST['params']['tax']),
       'page'      => intval($_POST['params']['page']),
       'orderby'   => $_POST['params']['orderby'],
       'order'     => $_POST['params']['order'],
-      'quantity' => intval($_POST['params']['quantity']),
+      'quantity'  => intval($_POST['params']['quantity']),
       'language'  => sanitize_text_field($_POST['params']['language']),
     );
     
@@ -275,7 +279,7 @@ class Ajax_Filter_Posts {
         'order'          => $attributes['order'],
     );
     
-    $response = $this->get_filter_posts($query_args, $language);
+    $response = $this->get_filter_posts($query_args, $attributes);
     
     if ($response) {
       wp_send_json_success($response);
@@ -361,15 +365,16 @@ class Ajax_Filter_Posts {
    * Set up a filters query and parse the template
    * 
    * @param  array  $args       Arguments for the WordPress Query
+   * @param  array  $attributes All shortcodes attributes passed from the frontend
    * @return string             HTMl to be sent via Ajax
    */
-  public function get_filter_posts($args, $language) {
-    if (function_exists('icl_object_id') && !empty($language)) {
+  public function get_filter_posts($args, $attributes) {
+    if (function_exists('icl_object_id') && !empty($attributes['language'])) {
       global $sitepress;
-        $sitepress->switch_lang( $language );
+      $sitepress->switch_lang( $attributes['language'] );
     }
 
-    $query = $this->query_posts($args);
+    $query = $this->query_posts($args, $attributes);
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
     $response = [];
     

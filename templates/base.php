@@ -1,10 +1,14 @@
 <section
   class="js-container-async ajax-posts"
-  data-post-type="<?= $attributes['post_type']; ?>"
-  data-quantity="<?= $attributes['posts_per_page']; ?>"
-  data-multiselect="<?= $attributes['multiselect']; ?>"
-  data-orderby="<?= $attributes['orderby']; ?>"
-  data-order="<?= $attributes['order']; ?>"
+  <?php if ( !empty( $attributes['id'] ) ) : ?>
+    id="ajax-posts-<?= esc_html( $attributes['id'] ); ?>"
+    data-id="<?= esc_html( $attributes['id'] ); ?>"
+  <?php endif; ?>
+  data-post-type="<?= esc_html( $attributes['post_type'] ); ?>"
+  data-quantity="<?= esc_html( $attributes['posts_per_page'] ); ?>"
+  data-multiselect="<?= esc_html( $attributes['multiselect'] ); ?>"
+  data-orderby="<?= esc_html( $attributes['orderby'] ); ?>"
+  data-order="<?= esc_html( $attributes['order'] ); ?>"
 >
   <div class="ajax-posts__status" style="display:none;"></div>
   <?php if ( $query->have_posts() && $query->post_count > 1) : ?>
