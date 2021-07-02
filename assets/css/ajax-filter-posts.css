@@ -1,7 +1,7 @@
 /*------------------------------------*\
     BASE
 \*------------------------------------*/
-  
+
 .ajax-posts {
   position: relative;
   overflow: hidden;
@@ -42,10 +42,6 @@
   border: 0;
 }
 
-.ajax-posts__load-more {
-  flex: 0 0 100%;
-}
-
 /*------------------------------------*\
     FILTERS
 \*------------------------------------*/
@@ -78,52 +74,41 @@
   -webkit-transform: translateX(-50%);
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  border: 10px solid red;
-  -webkit-animation: ajax-posts__spinner 8s infinite linear;
-  animation: ajax-posts__spinner 8s infinite linear;  
+  border-top: 5px solid rgba(0, 0, 0, 0.2);
+  border-right: 5px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 5px solid rgba(0, 0, 0, 0.2);
+  border-left: 5px solid black;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: ajax-posts-spinner 1.1s infinite linear;
+  animation: ajax-posts-spinner 1.1s infinite linear;
 }
 
 .ajax-posts.is-waiting .ajax-posts__spinner {
   display: block;
 }
- 
-@-webkit-keyframes ajax-posts__spinner {
- 0%, 100%{ border: solid 20px #68C3A3; }
- 6.25% { border: solid 2px #68C3A3; }
- 12.5% { border: solid 2px #52B3D9; }
- 18.75% { border: solid 20px #52B3D9; }
- 25% { border: solid 20px #52B3D9; }
- 31.25% { border: solid 2px #52B3D9; }
- 37.5% { border: solid 2px #F4D03F; }
- 43.75% { border: solid 20px #F4D03F; }
- 50% { border: solid 20px #F4D03F; }
- 56.25% { border: solid 2px #F4D03F; }
- 62.5% { border: solid 2px #D24D57; }
- 68.75% { border: solid 20px #D24D57; }
- 75% { border: solid 20px #D24D57; }
- 81.25% { border: solid 2px #D24D57; }
- 87.5% { border: solid 2px #68C3A3; }
- 93.75% { border: solid 20px #68C3A3; }   
-}
 
-@keyframes ajax-posts__spinner {
-  0%, 100%{ border: solid 20px #68C3A3; }
-  6.25% { border: solid 2px #68C3A3; }
-  12.5% { border: solid 2px #52B3D9; }
-  18.75% { border: solid 20px #52B3D9; }
-  25% { border: solid 20px #52B3D9; }
-  31.25% { border: solid 2px #52B3D9; }
-  37.5% { border: solid 2px #F4D03F; }
-  43.75% { border: solid 20px #F4D03F; }
-  50% { border: solid 20px #F4D03F; }
-  56.25% { border: solid 2px #F4D03F; }
-  62.5% { border: solid 2px #D24D57; }
-  68.75% { border: solid 20px #D24D57; }
-  75% { border: solid 20px #D24D57; }
-  81.25% { border: solid 2px #D24D57; }
-  87.5% { border: solid 2px #68C3A3; }
-  93.75% { border: solid 20px #68C3A3; }
+@-webkit-keyframes ajax-posts-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes ajax-posts-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
