@@ -46,7 +46,6 @@
     FILTERS
 \*------------------------------------*/
 
-
 .ajax-posts__filters ul {
     list-style-type: none;
     padding: 0;
@@ -55,9 +54,31 @@
 
 .ajax-posts__filter {
   display: block;
+  text-decoration: none;
+}
+
+.ajax-posts__filter.is-active {
+  text-decoration: underline;
+}
+
+/* toggle visibillity large filter lists */
+.ajax-posts__filterlist li:nth-child(n+5) {
+  display: none;
+}
+
+.ajax-posts__filterlist.is-collapsed li:nth-child(n+5) {
+  display: block;
 }
 
 .ajax-posts__filter-toggle-hide {
+  display: none;
+}
+
+.ajax-posts__filterlist.is-collapsed  .ajax-posts__filter-toggle-hide {
+  display: block;
+}
+
+.ajax-posts__filterlist.is-collapsed  .ajax-posts__filter-toggle-show {
   display: none;
 }
 
@@ -102,6 +123,7 @@
     transform: rotate(360deg);
   }
 }
+
 @keyframes ajax-posts-spinner {
   0% {
     -webkit-transform: rotate(0deg);
