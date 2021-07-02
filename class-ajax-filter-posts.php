@@ -51,13 +51,13 @@ class Ajax_Filter_Posts {
     'posts_per_page' => 12,
     'order'          => 'DESC',
     'orderby'        => 'date',
-    'tax'            => ['post_tag'],
+    'tax'            => 'post_tag',
     'multiselect'    => 'true',
   );
 
   /**
    * Allowed orderby values a user can add as an value in the orderby shortcode attribute
-   * 
+   *
    * Does not support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in`
    * because additionals arguments needs to be set with these orderby values.
    *
@@ -135,12 +135,12 @@ class Ajax_Filter_Posts {
 
   /**
    * Create shortcode
-   * 
+   *
    * @param  Array    $atts   Array of given attributes
    * @return String           HTML initial rendered by shortcode
    */
   public function create_shortcode($given_attributes) {
-    
+
     $attributes = shortcode_atts( $this->default_shortcode_attributes, $given_attributes, $this->plugin_name );
 
     // Check if the set attributes are allowed
@@ -169,7 +169,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Validate shrotode attributes
-   * 
+   *
    * @param  Array    $atts   Array of given attributes
    * @return Array|WP_Error   given attributes or an erorr when attributes are not valid
    */
@@ -204,7 +204,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Get a list of filters and terms, based on the taxonomies set in the shortcode
-   * 
+   *
    * @param  String   $taxonomies     Comma seperated list of taxonomies
    * @return Array                    List of taxonomies with terms
    */
@@ -218,7 +218,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Get a list of filters and terms
-   * 
+   *
    * @param  string   $taxonomies   A single taxonomy
    * @return Array                  Taxonomy name and list of terms associated with the taxonomy
    */
@@ -233,7 +233,7 @@ class Ajax_Filter_Posts {
           'name' => $taxonomy_data->labels->singular_name,
           'id' => 'taxonomy-' . str_replace('_', '-', $taxonomy_data->name),
           'filters' => $terms,
-        ];        
+        ];
       }
     }
 
@@ -242,13 +242,13 @@ class Ajax_Filter_Posts {
 
   /**
    * Send new posts query via AJAX after filters are changed in the frontend
-   * 
+   *
    * @return String HTML string with parsed posts or an error message
    */
   public function process_filter_change() {
 
     check_ajax_referer( 'filter-posts-nonce', 'nonce' );
-    
+
     $attributes = array(
       // when the id is null, the id is not transfered
       'id'        => !empty($_POST['params']['id']) ? sanitize_text_field($_POST['params']['id']) : null,
@@ -260,11 +260,11 @@ class Ajax_Filter_Posts {
       'quantity'  => intval($_POST['params']['quantity']),
       'language'  => sanitize_text_field($_POST['params']['language']),
     );
-    
+
     // Abort on false attributes
     // Because we get these attributes via AJAX the user could have changed the attributes
     $attributes = $this->validate_attributes($attributes);
-    
+
     if ( is_wp_error($attributes) ) {
       wp_send_json_error( $attributes->get_error_message() );
       die();
@@ -278,9 +278,9 @@ class Ajax_Filter_Posts {
         'orderby'        => $attributes['orderby'],
         'order'          => $attributes['order'],
     );
-    
+
     $response = $this->get_filter_posts($query_args, $attributes);
-    
+
     if ($response) {
       wp_send_json_success($response);
     } else {
@@ -291,7 +291,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Converts the queried page number to a real page number
-   * 
+   *
    * @param  Object   $query  WP Query
    * @return Integer          Current page
    */
@@ -302,7 +302,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Check if the queried page is the last page of the query
-   * 
+   *
    * @param  Object   $query  WP Query
    * @return Boolean          true if is last page
    */
@@ -312,7 +312,7 @@ class Ajax_Filter_Posts {
 
   /**
    * Get the query paramaters based on set filters
-   * 
+   *
    * @param  array  $taxonomies   list of taxanomies with terms
    * @return array                taxonomies prepared for the WordPress Query
    */
@@ -344,14 +344,14 @@ class Ajax_Filter_Posts {
 
   /**
    * Check of the given terms are valid terms
-   * 
+   *
    * @param  array    $terms  List of terms set by the filters
    * @param  string   $tax    Taxomy associated with the terms
    * @return array            List of valid terms
    */
   protected function get_valid_terms($terms, $tax) {
     $valid_terms = [];
-    
+
     foreach ($terms as $term) {
       $term = sanitize_text_field($term);
       if (term_exists($term,$tax)) {
@@ -360,10 +360,10 @@ class Ajax_Filter_Posts {
     }
     return $valid_terms;
   }
-  
+
   /**
    * Set up a filters query and parse the template
-   * 
+   *
    * @param  array  $args       Arguments for the WordPress Query
    * @param  array  $attributes All shortcodes attributes passed from the frontend
    * @return string             HTMl to be sent via Ajax
@@ -377,7 +377,7 @@ class Ajax_Filter_Posts {
     $query = $this->query_posts($args, $attributes);
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
     $response = [];
-    
+
     ob_start();
     include( $this->get_local_template('partials/loop.php'));
     $response['content'] = ob_get_clean();
