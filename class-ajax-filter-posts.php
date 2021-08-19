@@ -90,7 +90,7 @@ class Ajax_Filter_Posts {
   public function __construct() {
 
     $this->plugin_name = 'ajax-filter-posts';
-    $this->version = '0.5.1';
+    $this->version = '0.5.2';
 
     add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
     add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
@@ -148,8 +148,7 @@ class Ajax_Filter_Posts {
     $attributes = $this->validate_attributes($attributes);
 
     if ( is_wp_error($attributes) ) {
-      echo $attributes->get_error_message();
-      return;
+      return $attributes->get_error_message();
     }
 
     $filterlists = $this->get_filterlist($attributes['tax']);

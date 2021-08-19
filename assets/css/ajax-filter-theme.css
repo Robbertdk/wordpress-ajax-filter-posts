@@ -1,0 +1,16 @@
+.ajax-posts__filter:after{
+    background: #f0efea;
+    color: #27ae60;
+    width: 15px;
+    height: 15px;
+    content: '';
+    margin-right: 5px;
+    margin-top: 4px;
+    float: right;
+}
+
+.ajax-posts__filter:hover:after,
+.ajax-posts__filter.is-active:after {
+    content: '✔';
+    background: none;
+}
