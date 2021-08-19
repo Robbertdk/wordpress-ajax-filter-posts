@@ -148,8 +148,7 @@ class Ajax_Filter_Posts {
     $attributes = $this->validate_attributes($attributes);
 
     if ( is_wp_error($attributes) ) {
-      echo $attributes->get_error_message();
-      return;
+      return $attributes->get_error_message();
     }
 
     $filterlists = $this->get_filterlist($attributes['tax']);
