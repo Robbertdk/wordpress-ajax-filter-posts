@@ -6,14 +6,14 @@
           <?php if ( has_post_thumbnail() ) { the_post_thumbnail( 'medium' ); }?>
           <h3><?php the_title(); ?></h3>
         </a>
-      </article>            
+      </article>
   </div>
  <?php endwhile; ?>
  <?php if (!$this->is_last_page($query)) : ?>
   <div class="ajax-posts__load-more">
     <button class="js-load-more" data-page="<?= $this->get_page_number($query) + 1; ?>">
-      <?php _e('Load more', 'ajax-filter-posts') ?>        
-    </button>            
+      <?php _e('Load more', 'ajax-filter-posts') ?>
+    </button>
   </div>
    <?php endif; ?>
 <?php else: ?>

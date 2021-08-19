@@ -4,7 +4,8 @@
     id="ajax-posts-<?= esc_html( $attributes['id'] ); ?>"
     data-id="<?= esc_html( $attributes['id'] ); ?>"
   <?php endif; ?>
-  data-post-type="<?= esc_html( $attributes['post_type'] ); ?>"
+  data-post-type="<?= esc_html( implode(',', $attributes['post_type'] ) ); ?>"
+  data-post-status="<?= esc_html( implode(',', $attributes['post_status'] ) ); ?>"
   data-quantity="<?= esc_html( $attributes['posts_per_page'] ); ?>"
   data-multiselect="<?= esc_html( $attributes['multiselect'] ); ?>"
   data-orderby="<?= esc_html( $attributes['orderby'] ); ?>"
@@ -14,11 +15,11 @@
   <?php if ( $query->have_posts() && $query->post_count > 1) : ?>
     <button class="js-toggle-filters ajax-posts__toggle-filter">
       <span class="ajax-posts__filter-recipes-text">+ <?php  printf( __('Filter %s', 'ajax-filter-posts'), $plural_post_name); ?></span>
-      <span class="ajax-posts__show-recipes-text">+ <?php  printf( __('Show %s', 'ajax-filter-posts'), $plural_post_name); ?></span>   
-      <span class="ajax-posts__hide-filters-text">- <?= __('Hide filters', 'ajax-filter-posts'); ?></span>   
+      <span class="ajax-posts__show-recipes-text">+ <?php  printf( __('Show %s', 'ajax-filter-posts'), $plural_post_name); ?></span>
+      <span class="ajax-posts__hide-filters-text">- <?= __('Hide filters', 'ajax-filter-posts'); ?></span>
     </button>
   <?php endif; ?>
-  <div class="ajax-posts__view">  
+  <div class="ajax-posts__view">
     <aside class="ajax-posts__filters">
     <?php if ( $query->have_posts() && $query->post_count > 1) : ?>
         <?php include( $this->get_local_template('partials/filters.php') ); ?>

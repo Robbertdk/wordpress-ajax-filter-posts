@@ -20,25 +20,25 @@
    */
   function addEventListeners() {
       // Add event listeners with event propagination
-      on(container,'click', 'a[data-filter]', function(event) { 
+      on(container,'click', 'a[data-filter]', function(event) {
         handleFilterEvent(event.target);
         event.preventDefault();
         return true;
       });
 
-      on(container, 'click', '.js-collapse-filterlist', function(event) { 
+      on(container, 'click', '.js-collapse-filterlist', function(event) {
           toggleFilterListCollapse(event);
           event.preventDefault();
           return true;
       });
 
-      on(container, 'click', '.js-reset-filters', function(event) { 
+      on(container, 'click', '.js-reset-filters', function(event) {
           resetFilters();
           event.preventDefault();
           return true;
       });
 
-      on(container, 'click', '.js-load-more', function(event) { 
+      on(container, 'click', '.js-load-more', function(event) {
           handleLoadMoreEvent(event.target);
           event.preventDefault();
           return true;
@@ -60,6 +60,7 @@
       'tax'  : {},
       'quantity': parseInt(container.dataset.quantity, 10) || 0,
       'postType': container.dataset.postType || 'post',
+      'postStatus': container.dataset.postStatus || 'publish',
       'orderby':  container.dataset.orderby || 'date',
       'order':  container.dataset.order || 'DESC',
       'multiselect': container.dataset.multiselect === 'true',
@@ -68,7 +69,7 @@
 
   /**
    * Update query and get posts after filter change
-   * 
+   *
    * @param  NodeElement  filter  Clicked filter
    */
   function handleFilterEvent(filter) {
@@ -92,7 +93,7 @@
 
   /**
    * Deselect siblings filters when only one term per taxoomy is allowed
-   * 
+   *
    * @param  NodeElement  filter  Clicked filter
    */
   function deSelectSiblingFilters(filter) {
@@ -106,7 +107,7 @@
 
   /**
    * Get next page of posts
-   * 
+   *
    * @param  NodeElement  button  Clicked load more button
    */
   function handleLoadMoreEvent(button){
@@ -146,7 +147,7 @@
 
   /**
    * Update te query parameters based on the filter change
-   * 
+   *
    * @param  Array      params    params that will be changed
    */
   function updateQueryParams(params) {
@@ -164,7 +165,7 @@
 
   /**
    * Remove a term from the set of query params
-   * 
+   *
    * @param  string   tax   taxonomy of the term to remove
    * @param  {string   term  term to remove
    */
@@ -195,7 +196,7 @@
    * Get new posts via Ajax
    *
    * Retrieve a new set of posts based on the created query
-   * 
+   *
    * @return string server side generated HTML
    */
   function getAJAXPosts(args) {
@@ -207,7 +208,7 @@
     request.open('POST', filterPosts.ajaxUrl, true);
     request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     request.timeout = 4000; // time in milliseconds
-    
+
     request.onload = function() {
 
       //remove load more button
@@ -223,10 +224,10 @@
           hideResponseMessage();
           // If we have to remove the show more button
           if (args.reset) {
-            content.innerHTML = response.data.content;        
+            content.innerHTML = response.data.content;
           } else {
             content.innerHTML += response.data.content;
-          }          
+          }
         } else {
           status.innerHTML = response.data;
           showResponseMessage();
@@ -248,17 +249,17 @@
     request.send(objectToQueryString({
       action: 'process_filter_change',
       nonce: filterPosts.nonce,
-      params: queryParams,    
+      params: queryParams,
     }));
   }
 
   /**
    * Helper function for event delegation
    *
-   * To add event listeners on dynamic content, you can add a listener 
-   * on thewrapping container, find the dom-node that triggered 
-   * the event and check if that node mach our 
-   * 
+   * To add event listeners on dynamic content, you can add a listener
+   * on thewrapping container, find the dom-node that triggered
+   * the event and check if that node mach our
+   *
    * @param  NodeElement  el          wrapping element for the dynamic content
    * @param  string       eventName   type of event, e.g. click, mouseenter, etc
    * @param  string       selector    selector criteria of the element where the action should be on
@@ -295,11 +296,11 @@
    *
    * WordPress Ajax post request doesn't accept JSON, only form-urlencoded!
    * Took me a while to get...
-   * 
-   * Although seems not to be totally true: 
+   *
+   * Although seems not to be totally true:
    * http://wordpress.stackexchange.com/questions/177554/allowing-admin-ajax-php-to-receive-application-json-instead-of-x-www-form-url
    *
-   * But in this case we just convert the params object to a url encoded string, like our friend and foe jQuery does. 
+   * But in this case we just convert the params object to a url encoded string, like our friend and foe jQuery does.
    *
    */
   function objectToQueryString(a) {

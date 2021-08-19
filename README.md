@@ -13,11 +13,14 @@ This plugins uses no dependencies, is translatable and WPML ready.
 
 ## Parameters
 
-- **post_type**
-  Post type to show. Default post.
-
 - **tax**
   A comma seperated list of taxonomies to filter the post by. Default `post_term`.
+
+- **post_type**
+  A comma seperated list of post types to show. Default `post`.
+
+- **post_status**
+  A comma seperated list of post status to show. Default `publish`.
 
 - **post_per_page**
   Numbers of maximum posts to retreive at a time. Default 12.
@@ -49,12 +52,22 @@ I build a lot of sites that needed a functionality like this and decided to crea
 
 Clone this repo to your plugins or mu-plugins folder. When you load it in your mu-plugins folder, you have to call the plugin via a file that is directly in the `mu-plugins` folder. See [this article](https://www.sitepoint.com/wordpress-mu-plugins/) for more information.
 
+## Requirements
+Wordpress 5.7.0 or higer
+
 ## Filters hooks
 As a developer you can overwrite functionality with WordPress hooks
 
-### Query arugments
+### `ajax_filter_posts_query_args`
+
+#### Description
 With the filter `ajax_filter_posts_query_args` you can pass or alter query arguments to all post queries made by this plugin.
 
+#### Arguments
+`array $query_args` - query arguments set by the plugin Ajax Filter posts
+`array $shortcode_attributes` - all shortcode attributes
+
+#### Example
 For example you can add an extra taxonomy query.
 
 ```php
@@ -96,6 +109,31 @@ function my_site_set_additional_term_for_ajax_filter_posts($query_args, $shortco
 }
 add_filter('ajax_filter_posts_query_args', 'my_site_set_additional_term_for_ajax_filter_posts', 10, 2);
 ```
+### `ajax_filter_posts_is_post_type_viewable`
+
+By default only post types that are publicly queryable are allowed as shortcode parameters.
+This prevents that for example a custom private can be viewed when the wrong parameters are set or when a visitor manipulates the AJAX-request.
+
+For built-in post types such as posts and pages, the 'public' value will be evaluated. For all others, the 'publicly_queryable' value will be used.
+
+You can overwrite this check with this hook
+
+#### Arguments
+`boolean $is_publicly_queryable` - Default return value, esult of checking all set post types against Wordpress' *is_post_type_viewable* function
+`array $shortcode_attributes` - all shortcode attributes, including the *post_type* attribute
+
+### `ajax_filter_posts_is_post_status_viewable`
+
+By default only post status that are publicly queryable are allowed as shortcode parameters.
+This prevents that for example private or trashed posts can be viewed when the wrong parameters are set or when a visitor manipulates the AJAX-request.
+
+For built-in post statuses such as publish and private, the ‘public’ value will be evaluted. For all others, the ‘publicly_queryable’ value will be used.
+
+You can overwrite this check with this hook
+
+#### Arguments
+`boolean $is_publicly_queryable` - Default return value, result of checking all set post status against Wordpress' *is_post_status_viewable* function
+`array $shortcode_attributes` - all shortcode attributes, including the *post_status* attribute
 
 ## License
 
