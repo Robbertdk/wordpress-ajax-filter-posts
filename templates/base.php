@@ -33,3 +33,4 @@
     <span class="ajax-posts__screen-reader-only"><?php _e('Loading', 'ajax-filter-posts'); ?></span>
   </div>
 </section>
+<?php wp_reset_postdata(); ?>
