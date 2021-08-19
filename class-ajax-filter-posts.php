@@ -47,7 +47,8 @@ class Ajax_Filter_Posts {
    */
   protected $default_shortcode_attributes = array(
     'id'             => null, // a user can add a custom id
-    'post_type'      => 'post',
+    'post_type'      => 'post,page',
+    'post_status'    => 'publish',
     'posts_per_page' => 12,
     'order'          => 'DESC',
     'orderby'        => 'date',
@@ -89,7 +90,7 @@ class Ajax_Filter_Posts {
   public function __construct() {
 
     $this->plugin_name = 'ajax-filter-posts';
-    $this->version = '0.4.0';
+    $this->version = '0.5.0';
 
     add_action( 'plugins_loaded', [$this, 'load_textdomain'] );
     add_action( 'wp_enqueue_scripts', [$this,'add_scripts'] );
@@ -155,6 +156,7 @@ class Ajax_Filter_Posts {
 
     $query = $this->query_posts([
       'post_type'      => $attributes['post_type'],
+      'post_status'    => $attributes['post_status'],
       'posts_per_page' => $attributes['posts_per_page'],
       'order'          => $attributes['order'],
       'orderby'        => $attributes['orderby'],
@@ -175,17 +177,73 @@ class Ajax_Filter_Posts {
    */
   protected function validate_attributes($attributes) {
 
-    // So prevent query posts thats are not viewable or do not exist
-    if ( !is_post_type_viewable($attributes['post_type']) ) {
+    // Always convert post type and status to an array so we can always be sure we deal with an array
+    // makes multipe is_array/is_string checks redundant
+    $attributes['post_type'] = $this->delimited_to_array($attributes['post_type']);
+    $attributes['post_status'] = $this->delimited_to_array($attributes['post_status']);
+
+    // only allow publicly post types and status to be queried, if not overwritten by developer
+    $is_post_type_viewable = apply_filters('ajax_filter_posts_is_post_type_viewable', $this->is_every_post_type_viewable($attributes['post_type']), $attributes);
+    $is_post_status_viewable = apply_filters('ajax_filter_posts_is_post_status_viewable', $this->is_every_post_status_viewable($attributes['post_status']), $attributes);
+
+    if ( !$is_post_type_viewable || !$is_post_status_viewable ) {
       return new WP_Error('Posts not viewable', __("Something went wrong. The posts you've requested does not exist or is not viewable.", 'ajax-filter-posts'));
     }
 
+    // don't allow orderby values that are not supported
     if ( !in_array($attributes['orderby'], $this->allowed_orderby_values) ) {
-      // don't allow orderby values that are not supported
       return new WP_Error('Invalid orderby attribute', __("Something went wrong. The posts could not be sorted with the given orderby method.", 'ajax-filter-posts'));
     }
 
     return $attributes;
+  }
+
+  /**
+   * Convert comma delimited attributes to php arrays
+   *
+   * @param array $attribute
+   *
+   * @return array comma delimited to array
+   */
+  protected function delimited_to_array($attribute) {
+    if ( !is_string($attribute) ) {
+      return $attribute;
+    }
+    $attribute = explode(',', $attribute);
+    $attribute = array_map('trim', $attribute);
+    return $attribute;
+  }
+
+  /**
+   * Check if all post types are viewable
+   *
+   * @param array $post_type
+   *
+   * @return boolean
+   */
+  protected function is_every_post_type_viewable($post_type) {
+    foreach ($post_type as $type) {
+      if ( !is_post_type_viewable($type) ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Check if all post status are viewable
+   *
+   * @param array $post_status
+   *
+   * @return boolean
+   */
+  protected function is_every_post_status_viewable($post_status) {
+    foreach ($post_status as $status) {
+      if ( !is_post_status_viewable($status) ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -209,8 +267,7 @@ class Ajax_Filter_Posts {
    * @return Array                    List of taxonomies with terms
    */
   protected function get_filterlist($taxonomies) {
-    $filterlists = explode(',', $taxonomies);
-    $filterlists = array_map('trim', $filterlists);
+    $filterlists = $this->delimited_to_array($taxonomies);
     $filterlists = array_filter($filterlists, 'taxonomy_exists');
     $filterlists = $this->get_termlist($filterlists);
     return $filterlists;
@@ -251,14 +308,15 @@ class Ajax_Filter_Posts {
 
     $attributes = array(
       // when the id is null, the id is not transfered
-      'id'        => !empty($_POST['params']['id']) ? sanitize_text_field($_POST['params']['id']) : null,
-      'post_type' => sanitize_text_field($_POST['params']['postType']),
-      'tax'       => $this->get_tax_query_vars($_POST['params']['tax']),
-      'page'      => intval($_POST['params']['page']),
-      'orderby'   => $_POST['params']['orderby'],
-      'order'     => $_POST['params']['order'],
-      'quantity'  => intval($_POST['params']['quantity']),
-      'language'  => sanitize_text_field($_POST['params']['language']),
+      'id'          => !empty($_POST['params']['id']) ? sanitize_text_field($_POST['params']['id']) : null,
+      'post_type'   => sanitize_text_field($_POST['params']['postType']),
+      'post_status' => sanitize_text_field($_POST['params']['postStatus']),
+      'tax'         => $this->get_tax_query_vars($_POST['params']['tax']),
+      'page'        => intval($_POST['params']['page']),
+      'orderby'     => $_POST['params']['orderby'],
+      'order'       => $_POST['params']['order'],
+      'quantity'    => intval($_POST['params']['quantity']),
+      'language'    => sanitize_text_field($_POST['params']['language']),
     );
 
     // Abort on false attributes
@@ -273,6 +331,7 @@ class Ajax_Filter_Posts {
     $query_args = array(
         'paged'          => $attributes['page'],
         'post_type'      => $attributes['post_type'],
+        'post_status'    => $attributes['post_status'],
         'posts_per_page' => $attributes['quantity'],
         'tax_query'      => $attributes['tax'],
         'orderby'        => $attributes['orderby'],
