@@ -161,7 +161,7 @@ class Ajax_Filter_Posts {
       'orderby'        => $attributes['orderby'],
     ], $attributes);
 
-    $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
+    $plural_post_name = $this->get_post_type_plural_name($query->query['post_type']);
 
     ob_start();
     include( $this->get_local_template('base.php') );
@@ -433,7 +433,7 @@ class Ajax_Filter_Posts {
     }
 
     $query = $this->query_posts($args, $attributes);
-    $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
+    $plural_post_name = $this->get_post_type_plural_name($query->query['post_type']);
     $response = [];
 
     ob_start();
@@ -441,6 +441,19 @@ class Ajax_Filter_Posts {
     $response['content'] = ob_get_clean();
     $response['found'] = $query->found_posts;
     return $response;
+  }
+
+  /**
+   * Get the post type plural name. defaults to post
+   *
+   * @param string|array $post_type
+   *
+   * @return string
+   */
+  protected function get_post_type_plural_name($post_type) {
+    $post_type = is_array($post_type) ? $post_type[0] : $post_type;
+    $post_type_object = get_post_type_object($post_type);
+    return $post_type_object ? strtolower($post_type_object->labels->name) : __('posts', 'ajax-filter-posts');
   }
 
   /**
