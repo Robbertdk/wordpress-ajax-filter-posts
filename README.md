@@ -122,6 +122,7 @@ You can overwrite this check with this hook
 
 #### Arguments
 `boolean $is_publicly_queryable` - Default return value, esult of checking all set post types against Wordpress' *is_post_type_viewable* function
+
 `array $shortcode_attributes` - all shortcode attributes, including the *post_type* attribute
 
 ### `ajax_filter_posts_is_post_status_viewable`
@@ -135,6 +136,7 @@ You can overwrite this check with this hook
 
 #### Arguments
 `boolean $is_publicly_queryable` - Default return value, result of checking all set post status against Wordpress' *is_post_status_viewable* function
+
 `array $shortcode_attributes` - all shortcode attributes, including the *post_status* attribute
 
 ### `ajax_filter_posts_template_name`
@@ -143,10 +145,12 @@ This package searches for the the template files [in the active theme folder and
 
 #### Arguments
 `string $template` - The current retrieved template path. Empty if no path could be found.
+
 `string $template_name` - The name of the current template to retrieve, with exentsion and subpath (e.g. base.php, partials/filters.php). See the template folder of this package for the used template files.
 
 #### Arguments
 `boolean $is_publicly_queryable` - Default return value, result of checking all set post status against Wordpress' *is_post_status_viewable* function
+
 `array $shortcode_attributes` - all shortcode attributes, including the *post_status* attribute
 
 
