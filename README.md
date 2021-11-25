@@ -27,7 +27,7 @@ This plugins uses no dependencies, is translatable and WPML ready.
 
 - **orderby**
   Value to order the posts by. Supports `ID`, `author`, `title`, `name`, `type`, `date`, `modified`, `parent`, `rand`, `comment_count`, `relevance`, and `menu_order`.
-  Does **not** support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in` because additionals arguments needs to be set with these orderby values. You can [add your own query arguments via a filter hook](#query-arugments) if you need that support. Defaults to `date`.
+  Does **not** support `meta_value`, `meta_value_num`, `post_name__in`, `post_parent__in` `post_parent__in` because additionals arguments needs to be set with these orderby values. You can [add your own query arguments via a filter hook](#ajax_filter_posts_query_args) if you need that support. Defaults to `date`.
 
   Check the [WordPress documentation on Query arguments](https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters) for more information.
 
@@ -43,6 +43,8 @@ This plugins uses no dependencies, is translatable and WPML ready.
 ## Overwriting template files
 
 To easily overwrite template files you can copy one or more of the files in the templates folder to your own theme. Create a folder `ajax-filter-posts` in the root of your theme directory and copy the files in that newly created folder. Keep in mind that you have to keep the folder structure intact. For example: If you want a custom version of `loop.php`, you copy the file to `<<your-public-folder>>/wp-content/themes/<<your-theme>>/ajax-filter-posts/partials`.
+
+You can also [set a custom template path](#ajax_filter_posts_template_name).
 
 ## Motivation
 
@@ -120,6 +122,7 @@ You can overwrite this check with this hook
 
 #### Arguments
 `boolean $is_publicly_queryable` - Default return value, esult of checking all set post types against Wordpress' *is_post_type_viewable* function
+
 `array $shortcode_attributes` - all shortcode attributes, including the *post_type* attribute
 
 ### `ajax_filter_posts_is_post_status_viewable`
@@ -133,7 +136,23 @@ You can overwrite this check with this hook
 
 #### Arguments
 `boolean $is_publicly_queryable` - Default return value, result of checking all set post status against Wordpress' *is_post_status_viewable* function
+
 `array $shortcode_attributes` - all shortcode attributes, including the *post_status* attribute
+
+### `ajax_filter_posts_template_name`
+
+This package searches for the the template files [in the active theme folder and in this plugin folder](#overwriting-template-files). If that doesn't fit your needs, you can overwrite the template path.
+
+#### Arguments
+`string $template` - The current retrieved template path. Empty if no path could be found.
+
+`string $template_name` - The name of the current template to retrieve, with exentsion and subpath (e.g. base.php, partials/filters.php). See the template folder of this package for the used template files.
+
+#### Arguments
+`boolean $is_publicly_queryable` - Default return value, result of checking all set post status against Wordpress' *is_post_status_viewable* function
+
+`array $shortcode_attributes` - all shortcode attributes, including the *post_status* attribute
+
 
 ## License
 
