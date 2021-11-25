@@ -164,7 +164,14 @@ class Ajax_Filter_Posts {
     $plural_post_name = strtolower(get_post_type_object($query->query['post_type'])->labels->name);
 
     ob_start();
-    include( $this->get_local_template('base.php') );
+
+    $this->load_template('base.php', [
+      'attributes' => $attributes,
+      'query' => $query,
+      'filterlists' => $filterlists,
+      'plural_post_name' => $plural_post_name,
+    ]);
+
     return ob_get_clean();
   }
 
@@ -275,7 +282,7 @@ class Ajax_Filter_Posts {
   /**
    * Get a list of filters and terms
    *
-   * @param  string   $taxonomies   A single taxonomy
+   * @param  array   $taxonomies   A single taxonomy
    * @return Array                  Taxonomy name and list of terms associated with the taxonomy
    */
   protected function get_termlist($taxonomies) {
@@ -437,10 +444,32 @@ class Ajax_Filter_Posts {
     $response = [];
 
     ob_start();
-    include( $this->get_local_template('partials/loop.php'));
+    $this->load_template('partials/loop.php', [
+      'query' => $query,
+      'plural_post_name' => $plural_post_name,
+      'attributes' => $attributes,
+    ]);
+
     $response['content'] = ob_get_clean();
     $response['found'] = $query->found_posts;
     return $response;
+  }
+
+  /**
+   * Load the template
+   *
+   * @param string $template_name
+   *
+   * @return void
+   */
+  private function load_template($template_name, $args) {
+    extract($args);
+    $template = $this->get_local_template($template_name);
+    if ( !$template ) {
+      echo 'No template found';
+      return;
+    }
+    include $template;
   }
 
   /**
@@ -461,6 +490,7 @@ class Ajax_Filter_Posts {
     if (empty($template_name)) return false;
 
     $template = locate_template('ajax-filter-posts/' . $template_name);
+    $template = apply_filters( 'ajax_filter_posts_template_name', $template, $template_name );
 
     // If template not in theme, get plugins template file.
     if ( !$template ) {
@@ -469,7 +499,7 @@ class Ajax_Filter_Posts {
 
     if ( !file_exists( $template ) ) {
       _doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', $template ), '4.6.0' );
-      return;
+      return false;
     }
 
     return $template;
